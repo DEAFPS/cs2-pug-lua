@@ -27,11 +27,11 @@ Lua Patcher (use if you are not using MetaMod, and make sure your server runs -i
 ### Installing
 
 * Unzip into your servers `game/csgo` folder and
-* Add 'exec pugplugin' to your servers gamemode cfg (e.g. `gamemode_competitive.cfg`)
+* Add `exec pugplugin` to your servers gamemode cfg (e.g. `gamemode_competitive.cfg`)
 
 ### Configuration
 
-* To configure the plugin head to `csgo/scripts/vscripts/pug_cfg.lua`
+* To configure the plugin head to `game/csgo/scripts/vscripts/pug_cfg.lua`
 
   Feel free to change the variables to what you desire! Make sure to read their --comments
   
