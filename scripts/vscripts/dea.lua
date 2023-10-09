@@ -20,7 +20,7 @@ local adminPlayers = {
 local connectedPlayers = {}
 local activeAdmins = {}
 
-function HC_ReplaceColorCodes(text)
+local function HC_ReplaceColorCodes(text)
 	text = string.gsub(text, "{white}", "\x01")
 	text = string.gsub(text, "{darkred}", "\x02")
 	text = string.gsub(text, "{purple}", "\x03")
@@ -40,7 +40,7 @@ function HC_ReplaceColorCodes(text)
 	return text
 end
 
-function HC_PrintChatAll(text)		
+local function HC_PrintChatAll(text)		
 	ScriptPrintMessageChatAll(" " .. HC_ReplaceColorCodes(chatPrefix .. text))
 end
 
