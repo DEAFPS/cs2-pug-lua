@@ -20,7 +20,7 @@ local adminPlayers = {
 local connectedPlayers = {}
 local activeAdmins = {}
 
-local function HC_ReplaceColorCodes(text)
+function HC_ReplaceColorCodes_pug(text)
 	text = string.gsub(text, "{white}", "\x01")
 	text = string.gsub(text, "{darkred}", "\x02")
 	text = string.gsub(text, "{purple}", "\x03")
@@ -40,8 +40,8 @@ local function HC_ReplaceColorCodes(text)
 	return text
 end
 
-local function HC_PrintChatAll(text)		
-	ScriptPrintMessageChatAll(" " .. HC_ReplaceColorCodes(chatPrefix .. text))
+function HC_PrintChatAll_pug(text)		
+	ScriptPrintMessageChatAll(" " .. HC_ReplaceColorCodes_pug(chatPrefix .. text))
 end
 
 function tableContains(table, value)
@@ -179,14 +179,14 @@ Convars:RegisterCommand("rewarmup", function()
 		
 		SendToServerConsole("mp_warmuptime " .. warmupTime)
 		
-		HC_PrintChatAll("{green} Restarting Warmup...")
-		HC_PrintChatAll("{green} Restarting Warmup...")
-		HC_PrintChatAll("{green} Restarting Warmup...")
-		HC_PrintChatAll("{green} Restarting Warmup...")
-		HC_PrintChatAll("{green} Restarting Warmup...")
-		HC_PrintChatAll("{green} Restarting Warmup...")
-		HC_PrintChatAll("{green} Restarting Warmup...")
-		HC_PrintChatAll("{green} Restarting Warmup...")
+		HC_PrintChatAll_pug("{green} Restarting Warmup...")
+		HC_PrintChatAll_pug("{green} Restarting Warmup...")
+		HC_PrintChatAll_pug("{green} Restarting Warmup...")
+		HC_PrintChatAll_pug("{green} Restarting Warmup...")
+		HC_PrintChatAll_pug("{green} Restarting Warmup...")
+		HC_PrintChatAll_pug("{green} Restarting Warmup...")
+		HC_PrintChatAll_pug("{green} Restarting Warmup...")
+		HC_PrintChatAll_pug("{green} Restarting Warmup...")
 		
 		if kzsettingsinwarmup == true then
 			mvmntSettings("kz")
@@ -209,7 +209,7 @@ function StartPug(reason)
 		
 		Timers:CreateTimer("startingpug_timer", {
 						callback = function()
-							HC_PrintChatAll("{white}" .. reason .. " {green} Starting Pug in: " .. seconds)
+							HC_PrintChatAll_pug("{white}" .. reason .. " {green} Starting Pug in: " .. seconds)
 							seconds = seconds - 1
 							if seconds == 0 then
 								Timers:RemoveTimer(startingpug_timer)
@@ -224,13 +224,13 @@ function StartPug(reason)
 		callback = function()
 			SendToServerConsole("mp_warmup_end")
 			setGeneralSettings()
-			HC_PrintChatAll("{green} Starting Pug...")
-			HC_PrintChatAll("{green} Starting Pug...")
-			HC_PrintChatAll("{green} Starting Pug...")
-			HC_PrintChatAll("{green} Starting Pug...")
-			HC_PrintChatAll("{green} Starting Pug...")
-			HC_PrintChatAll("{green} Starting Pug...")
-			HC_PrintChatAll("{green} Starting Pug...")
+			HC_PrintChatAll_pug("{green} Starting Pug...")
+			HC_PrintChatAll_pug("{green} Starting Pug...")
+			HC_PrintChatAll_pug("{green} Starting Pug...")
+			HC_PrintChatAll_pug("{green} Starting Pug...")
+			HC_PrintChatAll_pug("{green} Starting Pug...")
+			HC_PrintChatAll_pug("{green} Starting Pug...")
+			HC_PrintChatAll_pug("{green} Starting Pug...")
 			
 		
 			if kzsettings == true then
@@ -239,7 +239,7 @@ function StartPug(reason)
 				mvmntSettings("vnl")
 			end
 			
-			HC_PrintChatAll("{white}" .. reason .. "{green} Movement Settings: [" .. currentMvmntSettings .. "]")
+			HC_PrintChatAll_pug("{white}" .. reason .. "{green} Movement Settings: [" .. currentMvmntSettings .. "]")
 		end
 		})
 	end
@@ -260,14 +260,14 @@ Convars:RegisterCommand("scramble", function()
 	if tableContains(activeAdmins, user) then
 		setGeneralSettings()
 		SendToServerConsole("mp_scrambleteams")
-		HC_PrintChatAll("{green} Scrambling Teams...")
-		HC_PrintChatAll("{green} Scrambling Teams...")
-		HC_PrintChatAll("{green} Scrambling Teams...")
-		HC_PrintChatAll("{green} Scrambling Teams...")
-		HC_PrintChatAll("{green} Scrambling Teams...")
-		HC_PrintChatAll("{green} Scrambling Teams...")
-		HC_PrintChatAll("{green} Scrambling Teams...")
-		HC_PrintChatAll("{green} Scrambling Teams...")
+		HC_PrintChatAll_pug("{green} Scrambling Teams...")
+		HC_PrintChatAll_pug("{green} Scrambling Teams...")
+		HC_PrintChatAll_pug("{green} Scrambling Teams...")
+		HC_PrintChatAll_pug("{green} Scrambling Teams...")
+		HC_PrintChatAll_pug("{green} Scrambling Teams...")
+		HC_PrintChatAll_pug("{green} Scrambling Teams...")
+		HC_PrintChatAll_pug("{green} Scrambling Teams...")
+		HC_PrintChatAll_pug("{green} Scrambling Teams...")
 	end
 end, nil, 0)
 
@@ -276,14 +276,14 @@ Convars:RegisterCommand("pausepug", function()
 	
 	if tableContains(activeAdmins, user) then
 		SendToServerConsole("mp_pause_match")
-		HC_PrintChatAll("{green} Pausing Pug...")
-		HC_PrintChatAll("{green} Pausing Pug...")
-		HC_PrintChatAll("{green} Pausing Pug...")
-		HC_PrintChatAll("{green} Pausing Pug...")
-		HC_PrintChatAll("{green} Pausing Pug...")
-		HC_PrintChatAll("{green} Pausing Pug...")
-		HC_PrintChatAll("{green} Pausing Pug...")
-		HC_PrintChatAll("{green} Pausing Pug...")
+		HC_PrintChatAll_pug("{green} Pausing Pug...")
+		HC_PrintChatAll_pug("{green} Pausing Pug...")
+		HC_PrintChatAll_pug("{green} Pausing Pug...")
+		HC_PrintChatAll_pug("{green} Pausing Pug...")
+		HC_PrintChatAll_pug("{green} Pausing Pug...")
+		HC_PrintChatAll_pug("{green} Pausing Pug...")
+		HC_PrintChatAll_pug("{green} Pausing Pug...")
+		HC_PrintChatAll_pug("{green} Pausing Pug...")
 	end
 end, nil, 0)
 
@@ -292,14 +292,14 @@ Convars:RegisterCommand("unpausepug", function()
 	
 	if tableContains(activeAdmins, user) then
 		SendToServerConsole("mp_unpause_match")
-		HC_PrintChatAll("{green} Unpausing Pug...")
-		HC_PrintChatAll("{green} Unpausing Pug...")
-		HC_PrintChatAll("{green} Unpausing Pug...")
-		HC_PrintChatAll("{green} Unpausing Pug...")
-		HC_PrintChatAll("{green} Unpausing Pug...")
-		HC_PrintChatAll("{green} Unpausing Pug...")
-		HC_PrintChatAll("{green} Unpausing Pug...")
-		HC_PrintChatAll("{green} Unpausing Pug...")
+		HC_PrintChatAll_pug("{green} Unpausing Pug...")
+		HC_PrintChatAll_pug("{green} Unpausing Pug...")
+		HC_PrintChatAll_pug("{green} Unpausing Pug...")
+		HC_PrintChatAll_pug("{green} Unpausing Pug...")
+		HC_PrintChatAll_pug("{green} Unpausing Pug...")
+		HC_PrintChatAll_pug("{green} Unpausing Pug...")
+		HC_PrintChatAll_pug("{green} Unpausing Pug...")
+		HC_PrintChatAll_pug("{green} Unpausing Pug...")
 	end
 end, nil, 0)
 
@@ -314,14 +314,14 @@ Convars:RegisterCommand("restartpug", function()
 		
 		SendToServerConsole("mp_restartgame 1")
 		setGeneralSettings()
-		HC_PrintChatAll("{green} Restarting Pug...")
-		HC_PrintChatAll("{green} Restarting Pug...")
-		HC_PrintChatAll("{green} Restarting Pug...")
-		HC_PrintChatAll("{green} Restarting Pug...")
-		HC_PrintChatAll("{green} Restarting Pug...")
-		HC_PrintChatAll("{green} Restarting Pug...")
-		HC_PrintChatAll("{green} Restarting Pug...")
-		HC_PrintChatAll("{green} Movement Settings: [" .. currentMvmntSettings .. "]")
+		HC_PrintChatAll_pug("{green} Restarting Pug...")
+		HC_PrintChatAll_pug("{green} Restarting Pug...")
+		HC_PrintChatAll_pug("{green} Restarting Pug...")
+		HC_PrintChatAll_pug("{green} Restarting Pug...")
+		HC_PrintChatAll_pug("{green} Restarting Pug...")
+		HC_PrintChatAll_pug("{green} Restarting Pug...")
+		HC_PrintChatAll_pug("{green} Restarting Pug...")
+		HC_PrintChatAll_pug("{green} Movement Settings: [" .. currentMvmntSettings .. "]")
 	end
 end, nil, 0)
 
@@ -341,7 +341,7 @@ Convars:RegisterCommand("changemap", function (_, map)
 		roundStarted = true
 		Timers:CreateTimer("startingpug_timer", {
 						callback = function()
-							HC_PrintChatAll("{green} Changing Map in: " .. seconds)
+							HC_PrintChatAll_pug("{green} Changing Map in: " .. seconds)
 							seconds = seconds - 1
 							if seconds == 0 then
 								Timers:RemoveTimer(startingpug_timer)
@@ -404,7 +404,7 @@ function PrintWaitingforPlayers(event)
 						if not roundStarted then		
 							
 							if wfpDelay == waitingForPlayerMsgInterval then
-								HC_PrintChatAll("{green} Waiting for players {lightgray}[Players ready: " .. #playersThatVoted .. "/" .. 2 * teamSize .. "]")
+								HC_PrintChatAll_pug("{green} Waiting for players {lightgray}[Players ready: " .. #playersThatVoted .. "/" .. 2 * teamSize .. "]")
 								wfpDelay = 0
 							else
 								wfpDelay = wfpDelay + 1
@@ -450,12 +450,12 @@ function PlayerVotes(event)
 		if tableContains(playersThatVoted, event.userid) then
 			removeFromVoted(event.userid)
 			if autokickOnMapChange == true then
-				HC_PrintChatAll( " {lightgray}" .. tostring(GetPlayerName(event.userid)) .. " is ready! {green} Players voted: " .. #playersThatVoted)
+				HC_PrintChatAll_pug( " {lightgray}" .. tostring(GetPlayerName(event.userid)) .. " is ready! {green} Players voted: " .. #playersThatVoted)
 			end
 		elseif not tableContains(playersThatVoted, event.userid) then
 			table.insert(playersThatVoted, event.userid)
 			if autokickOnMapChange == true then
-				HC_PrintChatAll( " {lightgray}" .. tostring(GetPlayerName(event.userid)) .. " is not ready! {green} Players voted: " .. #playersThatVoted)
+				HC_PrintChatAll_pug( " {lightgray}" .. tostring(GetPlayerName(event.userid)) .. " is not ready! {green} Players voted: " .. #playersThatVoted)
 			end
 		end
 	
