@@ -34,7 +34,8 @@ Lua Patcher (use if you are not using MetaMod, and make sure your server runs -i
 * To configure the plugin head to `game/csgo/scripts/vscripts/pug_cfg.lua`
 
   Feel free to change the variables to what you desire! Make sure to read their --comments
-  ⚠ Disable `autokickOnMapChange` if your server crashes after using `changemap`
+
+  ⚠ Disable `autokickOnMapChange` if your server crashes after using `changemap` ⚠
   
 * To whitelist players add their SteamID3 to the allowedPlayers table in whitelist.lua
 
