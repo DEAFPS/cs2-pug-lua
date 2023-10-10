@@ -411,7 +411,7 @@ function PrintWaitingforPlayers(event)
 							end
 								
 							if votingEnabled then
-								ScriptPrintMessageCenterAll("Waiting for players [Ready: " .. #playersThatVoted .. "/" .. 2 * teamSize .. "]     Use Ping to ready up!")
+								ScriptPrintMessageCenterAll("Waiting for players [Ready: " .. #playersThatVoted .. "/" .. 2 * teamSize .. "]     Use [MOUSE3] to ready up!")
 							else
 								ScriptPrintMessageCenterAll("Waiting for Admin to start the pug!")
 							end
