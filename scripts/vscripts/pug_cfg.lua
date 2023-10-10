@@ -11,7 +11,7 @@ kzsettings = false                      --whacky kz settings globally
 teamSize = 5                            --amount of players per team
 votingEnabled = true                    --if players are able to vote to start the pug
 
-autokickOnMapChange = false		--on map change the player isnt reconnecting to the server which means the player_connected event cannot fetch their usernames, ids or steamids
+autokickOnMapChange = true		--on map change the player isnt reconnecting to the server which means the player_connected event cannot fetch their usernames, ids or steamids
 					--for the banlist/whitelist and the readyup feature. Leaving this on true will kick all players first whenever the "changemap" admin command is used
 					--to ensure they reconnect.
 					--Warning: LUA being LUA on servers with high traffic or low hardware it can cause a freeze, because players arent kicked fast enough.
