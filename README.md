@@ -1,6 +1,6 @@
 # A Counter-Strike: 2 Server Pug plugin written in LUA
 
-Install the Pug plugin hassle-free with [voxbyte.io](https://vbl.ink/voxbyteshort) - your one-click solution for effortless Counter-Strike 2 server hosting
+⚠ This Lua project will not recieve any more feautures due to the limitations of the Lua API! Lua VScript is intentionally disabled by Valve! It is expected to be replaced by Pulse in the future, and will likely be completely removed from the game when that happens. Depend on Lua at your own risk.
 
 ## Admin Commands
 
