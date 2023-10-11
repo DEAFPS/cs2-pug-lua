@@ -77,6 +77,7 @@ end
 
 function mvmntSettings(setting)
 	if setting == "kz" then
+		SendToServerConsole("sv_cheats 1")
 		SendToServerConsole("sv_accelerate 6.5")
 		SendToServerConsole("sv_accelerate_use_weapon_speed 0")
 		SendToServerConsole("sv_airaccelerate 100.0")
@@ -99,12 +100,12 @@ function mvmntSettings(setting)
 		SendToServerConsole("sv_wateraccelerate 10.0")
 		SendToServerConsole("sv_water_movespeed_multiplier 0.8")
 		SendToServerConsole("sv_water_swim_mode  0.0")
-		SendToServerConsole("sv_weapon_encumbrance_per_item 0.0")
-		SendToServerConsole("sv_weapon_encumbrance_scale 0.0")
+		SendToServerConsole("sv_cheats 0")
 		currentMvmntSettings = "KZ"
 	end
 	
 	if setting == "vnl" then
+		SendToServerConsole("sv_cheats 1")
 		SendToServerConsole("sv_accelerate 5.5")
 		SendToServerConsole("sv_accelerate_use_weapon_speed 1")
 		SendToServerConsole("sv_airaccelerate 12.0")
@@ -127,8 +128,7 @@ function mvmntSettings(setting)
 		SendToServerConsole("sv_wateraccelerate 10.0")
 		SendToServerConsole("sv_water_movespeed_multiplier 0.8")
 		SendToServerConsole("sv_water_swim_mode  0.0")
-		SendToServerConsole("sv_weapon_encumbrance_per_item 0.85")
-		SendToServerConsole("sv_weapon_encumbrance_scale 0.0")
+		SendToServerConsole("sv_cheats 0")
 		currentMvmntSettings = "VNL"
 	end
 	
