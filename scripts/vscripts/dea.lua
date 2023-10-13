@@ -535,7 +535,7 @@ end
 StartWarmup()
 
 ListenToGameEvent("player_connect", OnPlayerConnect, nil)
-ListenToGameEvent("player_spawned", OnPlayerSpawned, nil)
+ListenToGameEvent("player_spawn", OnPlayerSpawned, nil)
 ListenToGameEvent("player_ping", PlayerVotes, nil)
 ListenToGameEvent("player_disconnect", OnPlayerDisconnect, nil)
 
