@@ -30,7 +30,7 @@ Lua Patcher (use if you are not using MetaMod, and make sure your server runs -i
 * To add admins edit the `adminPlayers` table in `pug_cfg.lua`
 
 ## Admin Commands
-
+- `adminsay hello`       --prints a message in chat with a admin nametag
 - `startpug`             --starts the pug
 - `pausepug`             --pauses the pug
 - `unpausepug`           --unpauses the pug
