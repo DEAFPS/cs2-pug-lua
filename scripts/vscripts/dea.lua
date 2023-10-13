@@ -73,6 +73,24 @@ function UserIdPawnToPlayerPawn(useridPawn)
     return EntIndexToHScript(bit.band(useridPawn, 16383))
 end
 
+function GetPlayerNameByID(userid)
+    local playerData = connectedPlayers[userid]
+    if playerData then
+        return playerData.name
+    else
+        return "unknown"
+    end
+end
+
+function GetPlayerNameByPawn(playerpawn)
+    for _, playerData in pairs(connectedPlayers) do
+        if playerData.playerpawn == playerpawn then
+            return tostring(playerData.name)
+        end
+    end
+    return "unknown"
+end
+
 function mvmntSettings(setting)
 	if setting == "kz" then
 		SendToServerConsole("sv_cheats 1")
@@ -396,7 +414,7 @@ Convars:RegisterCommand( "adminsay" , function (_, msg)
     local user = Convars:GetCommandClient()
 	
 	if checkPlayerPawnForAdminStatus(user) then
-		ScriptPrintMessageChatAll(" \x10 " .. msg)
+		ScriptPrintMessageChatAll(" \x01 [ADMIN " .. GetPlayerNameByPawn(user) .. "] \x10" .. tostring(msg))
 	end
 end, nil , FCVAR_PROTECTED)
 
@@ -443,15 +461,6 @@ function removeFromVoted(userid)
     end
 end
 
-function GetPlayerName(userid)
-    local playerData = connectedPlayers[userid]
-    if playerData then
-        return playerData.name
-    else
-        return "unknown"
-    end
-end
-
 function PlayerVotes(event)
 	if (roundStarted == false) and votingEnabled == true then
 		
@@ -460,12 +469,12 @@ function PlayerVotes(event)
 		if tableContains(playersThatVoted, event.userid) then
 			removeFromVoted(event.userid)
 			if autokickOnMapChange == true then
-				HC_PrintChatAll_pug( " {lightgray}" .. tostring(GetPlayerName(event.userid)) .. " is not ready! {green}Players voted: " .. #playersThatVoted)
+				HC_PrintChatAll_pug( " {lightgray}" .. tostring(GetPlayerNameByID(event.userid)) .. " is not ready! {green}Players voted: " .. #playersThatVoted)
 			end
 		elseif not tableContains(playersThatVoted, event.userid) then
 			table.insert(playersThatVoted, event.userid)
 			if autokickOnMapChange == true then
-				HC_PrintChatAll_pug( " {lightgray}" .. tostring(GetPlayerName(event.userid)) .. " is ready! {green}Players voted: " .. #playersThatVoted)
+				HC_PrintChatAll_pug( " {lightgray}" .. tostring(GetPlayerNameByID(event.userid)) .. " is ready! {green}Players voted: " .. #playersThatVoted)
 			end
 		end
 	
