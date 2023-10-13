@@ -3,7 +3,7 @@ warmupEndless = true
 warmupTime = "234124235"                --default is infinite
 waitingForPlayerMsgInterval = 2		--how long the delay in seconds should be between sending "waiting for players" chat msgs
 
-enableWhitelist = false                  --if whitelist shall be on or off
+enableWhitelist = true                  --if whitelist shall be on or off
 kzsettingsinwarmup = true               --whacky kz settings in warmup only
 kzsettings = false                      --whacky kz settings globally
 teamSize = 5                            --amount of players per team
