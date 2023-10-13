@@ -2,18 +2,6 @@
 
 ⚠ This Lua project will not receive any more features due to the limitations of the Lua API! Lua VScript is intentionally disabled by Valve! It is expected to be replaced by Pulse in the future, and will likely be completely removed from the game when that happens. Depend on Lua at your own risk.
 
-## Admin Commands
-
-- `adminlogin pw`        --allows the usage of following commands
-- `startpug`             --starts the pug
-- `pausepug`             --pauses the pug
-- `unpausepug`           --unpauses the pug
-- `restartpug`           --compleatly restarts the pug
-- `scramble`             --shuffles teams
-- `rewarmup`             --restarts warmup phase
-- `changemap de_dust2`   --changes map
-- `pugkick id`           --kicks the player (use `status` to get the player id you want to kick)
-
 ![alt text](https://i.imgur.com/mblcbTI.jpeg)
 
 ### Dependencies
@@ -39,6 +27,18 @@ Lua Patcher (use if you are not using MetaMod, and make sure your server runs -i
   
 * To whitelist players add their SteamID3 to the allowedPlayers table in whitelist.lua
 
+* To add admins edit the `adminPlayers` table in `pug_cfg.lua`
+
+## Admin Commands
+- `adminsay hello`       --prints a message in chat with a admin nametag
+- `startpug`             --starts the pug
+- `pausepug`             --pauses the pug
+- `unpausepug`           --unpauses the pug
+- `restartpug`           --compleatly restarts the pug
+- `scramble`             --shuffles teams
+- `rewarmup`             --restarts warmup phase
+- `pugkick id`           --kicks the player (use `status` to get the player id you want to kick)
+- `changemap de_dust2`   --changes map
 
 ## Author
 [@DEAFPS_](https://twitter.com/deafps_)

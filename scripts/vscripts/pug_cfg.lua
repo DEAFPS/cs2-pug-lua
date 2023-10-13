@@ -3,8 +3,6 @@ warmupEndless = true
 warmupTime = "234124235"                --default is infinite
 waitingForPlayerMsgInterval = 2		--how long the delay in seconds should be between sending "waiting for players" chat msgs
 
-adminPassword = "123"                   --change this to your desired admin pw
-
 enableWhitelist = true                  --if whitelist shall be on or off
 kzsettingsinwarmup = true               --whacky kz settings in warmup only
 kzsettings = false                      --whacky kz settings globally
@@ -24,3 +22,9 @@ useCustomCFG = false 			-- if a custom cfg should be used
 
 customCFG = "crazywhackysettings.cfg" 	-- place your custom cfg into the cfg folder and put name here.
 					-- make sure to not use mp_restartgame since that is being handled by the plugin already
+
+
+adminPlayers = {			--admins/constantly whitelisted, same as with the whitelist table use a SteamID3
+	"[U:0:00000000]", --admin example
+	"[U:0:00000000]", --admin example
+}

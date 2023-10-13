@@ -1,5 +1,8 @@
---SHITTY PUG PLUGIN BY DEAFPS
--- HC_ functions by NickFox007
+----------------------------------------------------------
+-- A Counter-Strike: 2 Server Pug plugin written in LUA --
+----------------------------------------------------------
+-- Written by @DEAFPS_ -----------------------------------
+----------------------------------------------------------
 
 require "libs.timers"
 require "whitelist"
@@ -8,15 +11,6 @@ require "pug_cfg"
 
 roundStarted = false
 currentMvmntSettings = "VNL"
-
-local adminPlayers = {
-	--admins/constantly whitelisted
-	"[U:1:146535711]", --dea
-	"[U:1:214857343]", --mezel
-	"[U:1:83116821]", --malek
-	"[U:1:166331469]", --kuba
-	"[U:1:55900622]", --tamas
-}
 local connectedPlayers = {}
 local activeAdmins = {}
 
@@ -73,6 +67,28 @@ function checkWL(event)
 		print("[Whitelist] " .. username .. " not on whitelist, kicking...")
 		SendToServerConsole("kickid " .. event.userid .. " You are not on the whitelist!")
 	end  
+end
+
+function UserIdPawnToPlayerPawn(useridPawn)
+    return EntIndexToHScript(bit.band(useridPawn, 16383))
+end
+
+function GetPlayerNameByID(userid)
+    local playerData = connectedPlayers[userid]
+    if playerData then
+        return playerData.name
+    else
+        return "unknown"
+    end
+end
+
+function GetPlayerNameByPawn(playerpawn)
+    for _, playerData in pairs(connectedPlayers) do
+        if playerData.playerpawn == playerpawn then
+            return tostring(playerData.name)
+        end
+    end
+    return "unknown"
 end
 
 function mvmntSettings(setting)
@@ -156,10 +172,23 @@ function StartWarmup()
 	end
 end
 
+function checkPlayerPawnForAdminStatus(playerPawnToCheck)
+    for _, playerData in pairs(connectedPlayers) do
+        if playerData.playerpawn == playerPawnToCheck then
+            if playerData.admin == true then
+                return true
+            else
+                return false
+            end
+        end
+    end
+    print("Player pawn not found")
+end
+
 Convars:RegisterCommand("rewarmup", function()
 	local user = Convars:GetCommandClient()
 	
-	if tableContains(activeAdmins, user) then
+	if checkPlayerPawnForAdminStatus(user) then
 	
 		SendToServerConsole("mp_warmup_start")
 		setGeneralSettings()
@@ -238,17 +267,16 @@ end
 
 Convars:RegisterCommand("startpug", function()
 	local user = Convars:GetCommandClient()
-	print(user)
 	
-	if (roundStarted == false) and tableContains(activeAdmins, user) then
-		StartPug("[Admin]")
+	if (roundStarted == false) and checkPlayerPawnForAdminStatus(user) then
+		StartPug("[Admin " .. GetPlayerNameByPawn(user) .. "]")
 	end
 end, nil, 0)
 
 Convars:RegisterCommand("scramble", function()
 	local user = Convars:GetCommandClient()
 	
-	if tableContains(activeAdmins, user) then
+	if checkPlayerPawnForAdminStatus(user) then
 		setGeneralSettings()
 		SendToServerConsole("mp_scrambleteams")
 		HC_PrintChatAll_pug("{green} Scrambling Teams...")
@@ -265,7 +293,7 @@ end, nil, 0)
 Convars:RegisterCommand("pausepug", function()
 	local user = Convars:GetCommandClient()
 	
-	if tableContains(activeAdmins, user) then
+	if checkPlayerPawnForAdminStatus(user) then
 		SendToServerConsole("mp_pause_match")
 		HC_PrintChatAll_pug("{green} Pausing Pug...")
 		HC_PrintChatAll_pug("{green} Pausing Pug...")
@@ -281,7 +309,7 @@ end, nil, 0)
 Convars:RegisterCommand("unpausepug", function()
 	local user = Convars:GetCommandClient()
 	
-	if tableContains(activeAdmins, user) then
+	if checkPlayerPawnForAdminStatus(user) then
 		SendToServerConsole("mp_unpause_match")
 		HC_PrintChatAll_pug("{green} Unpausing Pug...")
 		HC_PrintChatAll_pug("{green} Unpausing Pug...")
@@ -296,7 +324,7 @@ end, nil, 0)
 
 Convars:RegisterCommand("restartpug", function()
 	local user = Convars:GetCommandClient()
-	if tableContains(activeAdmins, user) then
+	if checkPlayerPawnForAdminStatus(user) then
 		if kzsettings == true then
 				mvmntSettings("kz")
 			else 
@@ -326,7 +354,7 @@ Convars:RegisterCommand("changemap", function (_, map)
 	local mmap = tostring (map) or  30
 	local user = Convars:GetCommandClient()
 	
-	if tableContains(activeAdmins, user) then
+	if checkPlayerPawnForAdminStatus(user) then
 	
 		seconds = 10
 		roundStarted = true
@@ -367,7 +395,7 @@ Convars:RegisterCommand( "pugkick" , function (_, id)
         local userid = tostring (id)
         local user = Convars:GetCommandClient()
 	
-	if tableContains(activeAdmins, user) then
+	if checkPlayerPawnForAdminStatus(user) then
 		SendToServerConsole("kickid " .. userid .. " kicked by server admin")
 		print(userid .. " kicked from the server")
 	end
@@ -376,8 +404,16 @@ end, nil , FCVAR_PROTECTED)
 Convars:RegisterCommand( "pugkickall" , function ()
     local user = Convars:GetCommandClient()
 	
-	if tableContains(activeAdmins, user) then
+	if checkPlayerPawnForAdminStatus(user) then
 		KickAllPlayers()
+	end
+end, nil , FCVAR_PROTECTED)
+
+Convars:RegisterCommand( "adminsay" , function (_, msg)
+    local user = Convars:GetCommandClient()
+	
+	if checkPlayerPawnForAdminStatus(user) then
+		ScriptPrintMessageChatAll(" \x01 [ADMIN " .. GetPlayerNameByPawn(user) .. "] \x10" .. tostring(msg))
 	end
 end, nil , FCVAR_PROTECTED)
 
@@ -424,15 +460,6 @@ function removeFromVoted(userid)
     end
 end
 
-function GetPlayerName(userid)
-    local playerData = connectedPlayers[userid]
-    if playerData then
-        return playerData.name
-    else
-        return "unknown"
-    end
-end
-
 function PlayerVotes(event)
 	if (roundStarted == false) and votingEnabled == true then
 		
@@ -441,12 +468,12 @@ function PlayerVotes(event)
 		if tableContains(playersThatVoted, event.userid) then
 			removeFromVoted(event.userid)
 			if autokickOnMapChange == true then
-				HC_PrintChatAll_pug( " {lightgray}" .. tostring(GetPlayerName(event.userid)) .. " is not ready! {green}Players voted: " .. #playersThatVoted)
+				HC_PrintChatAll_pug( " {lightgray}" .. tostring(GetPlayerNameByID(event.userid)) .. " is not ready! {green}Players voted: " .. #playersThatVoted)
 			end
 		elseif not tableContains(playersThatVoted, event.userid) then
 			table.insert(playersThatVoted, event.userid)
 			if autokickOnMapChange == true then
-				HC_PrintChatAll_pug( " {lightgray}" .. tostring(GetPlayerName(event.userid)) .. " is ready! {green}Players voted: " .. #playersThatVoted)
+				HC_PrintChatAll_pug( " {lightgray}" .. tostring(GetPlayerNameByID(event.userid)) .. " is ready! {green}Players voted: " .. #playersThatVoted)
 			end
 		end
 	
@@ -456,26 +483,14 @@ function PlayerVotes(event)
 	end
 end
 
-function addAdmin(activeAdmins, admin)
-    for _, existingAdmin in ipairs(activeAdmins) do
-        if existingAdmin == admin then
-            print("admin already logged in")
-            return
-        end
-    end
-
-    table.insert(activeAdmins, admin)
-end
-
-Convars:RegisterCommand( "adminlogin" , function (_, pw)
-        local password = tostring (pw) or  30
-        
-	if password == adminPassword then
-		local admin = Convars:GetCommandClient()
-		addAdmin(activeAdmins, admin)
-		print("admin logged in")
+function checkAdmin(steamid, event)
+    if tableContains(adminPlayers, steamid) then
+		print("admin connected: " .. tostring(event.name))
+		return true
+	else
+		return false
 	end
-end, nil , FCVAR_PROTECTED)
+end
 
 function OnPlayerConnect(event)
 	if enableWhitelist == true then
@@ -490,9 +505,23 @@ function OnPlayerConnect(event)
 		name = event.name,
 		userid = event.userid,
 		networkid = event.networkid,
-		address = event.address
+		address = event.address,
+		playerpawn = " ",
+		admin = checkAdmin(tostring(event.networkid), event)
 	}
 	connectedPlayers[event.userid] = playerData
+end
+
+function OnPlayerSpawned(event)
+    
+	PrintWaitingforPlayers(event)
+	
+	local userid = event.userid
+    local playerData = connectedPlayers[userid]
+    if playerData then
+        playerData.playerpawn = UserIdPawnToPlayerPawn(event.userid_pawn)
+    end
+	
 end
 
 function OnPlayerDisconnect(event)
@@ -503,7 +532,7 @@ end
 StartWarmup()
 
 ListenToGameEvent("player_connect", OnPlayerConnect, nil)
-ListenToGameEvent("player_spawn", PrintWaitingforPlayers, nil)
+ListenToGameEvent("player_spawn", OnPlayerSpawned, nil)
 ListenToGameEvent("player_ping", PlayerVotes, nil)
 ListenToGameEvent("player_disconnect", OnPlayerDisconnect, nil)
 
