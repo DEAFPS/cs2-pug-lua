@@ -392,6 +392,14 @@ Convars:RegisterCommand( "pugkickall" , function ()
 	end
 end, nil , FCVAR_PROTECTED)
 
+Convars:RegisterCommand( "adminsay" , function (_, msg)
+    local user = Convars:GetCommandClient()
+	
+	if checkPlayerPawnForAdminStatus(user) then
+		ScriptPrintMessageChatAll(" \x10 " .. msg)
+	end
+end, nil , FCVAR_PROTECTED)
+
 local playersThatVoted = {}
 
 wfpDelay = 0
