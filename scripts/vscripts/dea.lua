@@ -267,10 +267,9 @@ end
 
 Convars:RegisterCommand("startpug", function()
 	local user = Convars:GetCommandClient()
-	print(user)
 	
 	if (roundStarted == false) and checkPlayerPawnForAdminStatus(user) then
-		StartPug("[Admin]")
+		StartPug("[Admin " .. GetPlayerNameByPawn(user) .. "]")
 	end
 end, nil, 0)
 
@@ -516,13 +515,11 @@ end
 function OnPlayerSpawned(event)
     
 	PrintWaitingforPlayers(event)
-	print("before conv " .. tostring(event.userid_pawn))
 	
 	local userid = event.userid
     local playerData = connectedPlayers[userid]
     if playerData then
         playerData.playerpawn = UserIdPawnToPlayerPawn(event.userid_pawn)
-		print("after conv " .. tostring(playerData.playerpawn))
     end
 	
 end
