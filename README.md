@@ -41,11 +41,17 @@ Lua Patcher (use if you are not using MetaMod, and make sure your server runs -i
 - `pugkick id`           --kicks the player (use `status` to get the player id you want to kick)
 - `changemap de_dust2`   --changes map
 
-## Admin Commands
+## Pracc Commands
 - `savenade mynade`      --saves a nade lineup with a given name
 - `loadnade mynade`      --loads a nade lineup
 - `importnade` "mynade 200 2500 100 -25 -140 0.00" --imports a nade from a nade code
 - `pracchelp`            --prints these commands in chat
+
+# Some Nade Codes to import
+- Nuke Outside Cross JT `"outside_jumpthrow -1349.97 -968.03 -399.97 -12.03 -27.06 0.00"`
+- Nuke Solo Secret Cross JT `"secret_jumpthrow -1349.97 -968.03 -399.97 -28.23 -28.60 0.00"`
+- Nuke A Heaven JT `"a_haven_jumpthrow -1180.03 -1263.97 -319.97 -14.76 23.13 0.00"`
+- Inferno CT `"inferno_ct 371.23 1661.56 134.03 -32.74 64.58 0.00"`
 
 ## Author
 [@DEAFPS_](https://twitter.com/deafps_)
