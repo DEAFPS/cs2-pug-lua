@@ -287,7 +287,7 @@ Convars:RegisterCommand( "pracc" , function (_, msg)
 			ScriptPrintMessageChatAll(" \x01 [ADMIN] \x10" .. " Commands:")
 			ScriptPrintMessageChatAll(" \x01 [ADMIN] \x10" .. " savenade mynade - saves a nade lineup with a given name!")
 			ScriptPrintMessageChatAll(" \x01 [ADMIN] \x10" .. " loadnade mynade - loads a nade lineup")
-			ScriptPrintMessageChatAll(" \x01 [ADMIN] \x10" .. ' importnade "mynade 200 2500 100 -25 -140 0.00" - imports a nade from a nade code')
+			ScriptPrintMessageChatAll(" \x01 [ADMIN] \x10" .. ' importnade "code" - imports a nade from a nade code')
 			ScriptPrintMessageChatAll(" \x01 [ADMIN] \x10" .. " pracchelp - prints these commands in chat")
 			praccEnabled = true
 			roundStarted = true
