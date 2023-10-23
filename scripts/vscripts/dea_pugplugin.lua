@@ -331,7 +331,7 @@ Convars:RegisterCommand( "savenade" , function (_, msg)
 		local formattedOrigin = string.format("%.2f %.2f %.2f", user:GetAbsOrigin().x, user:GetAbsOrigin().y, user:GetAbsOrigin().z)
 		local formattedAngle = string.format("%.2f %.2f %.2f", user:EyeAngles().x, user:EyeAngles().y, user:EyeAngles().z)
 		
-		ScriptPrintMessageChatAll(' \x05' .. tostring(GetPlayerNameByPawn(user)) .. ' loaded a Nade! \x01 "' .. tostring(msg) .. ' ' .. formattedOrigin .. ' ' .. formattedAngle ..'"')
+		ScriptPrintMessageChatAll(' \x05' .. tostring(GetPlayerNameByPawn(user)) .. ' saved a Nade! \x01 "' .. tostring(msg) .. ' ' .. formattedOrigin .. ' ' .. formattedAngle ..'"')
 		
 		
 	end
