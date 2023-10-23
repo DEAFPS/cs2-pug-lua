@@ -43,7 +43,7 @@ Lua Patcher (use if you are not using MetaMod, and make sure your server runs -i
 
 ## Admin Commands
 - `savenade mynade`      --saves a nade lineup with a given name
-- `loadnade mynade`      --loads a nade lineup")
+- `loadnade mynade`      --loads a nade lineup
 - `importnade` "mynade 200 2500 100 -25 -140 0.00" --imports a nade from a nade code
 - `pracchelp`            --prints these commands in chat
 
