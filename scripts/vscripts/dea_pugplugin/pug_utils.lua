@@ -81,6 +81,15 @@ function GetPlayerNameByPawn(playerpawn)
     return "unknown"
 end
 
+function GetUserIDByPawn(playerpawn)
+    for _, playerData in pairs(connectedPlayers) do
+        if playerData.playerpawn == playerpawn then
+            return tonumber(playerData.userid)
+        end
+    end
+    return "unknown"
+end
+
 function mvmntSettings(setting)
 	if setting == "kz" then
 		SendToServerConsole("sv_cheats 1")
@@ -140,6 +149,8 @@ function setGeneralSettings()
 	SendToServerConsole("mp_randomspawn 0")
 	SendToServerConsole("mp_teammates_are_enemies 0")
 	
+	SendToServerConsole("mp_respawn_on_death_t 0")
+	SendToServerConsole("mp_respawn_on_death_ct 0")
 	SendToServerConsole("mp_autoteambalance 1")
 	SendToServerConsole("mp_timelimit 0")
 	SendToServerConsole("mp_roundtime 1.920000")
@@ -162,6 +173,8 @@ function setGeneralSettings()
 	SendToServerConsole("mp_drop_grenade_enable 1")
 	SendToServerConsole("mp_anyone_can_pickup_c4 0")
 	SendToServerConsole("sv_grenade_trajectory_prac_pipreview 0")
+	SendToServerConsole('mp_t_default_grenades 0')
+	SendToServerConsole('mp_ct_default_grenades 0')
 	SendToServerConsole("mp_restartgame 1")
 	SendToServerConsole("sv_cheats 0")
 	
@@ -181,6 +194,8 @@ function setPraccSettings()
 	
 	SendToServerConsole("mp_warmup_end")
 	SendToServerConsole("sv_cheats 1")
+	SendToServerConsole("mp_respawn_on_death_t 1")
+	SendToServerConsole("mp_respawn_on_death_ct 1")
 	SendToServerConsole("mp_autoteambalance 0")
 	SendToServerConsole("mp_timelimit 0")
 	SendToServerConsole("mp_roundtime 60")
@@ -202,6 +217,8 @@ function setPraccSettings()
 	SendToServerConsole("mp_drop_knife_enable 1")
 	SendToServerConsole("mp_drop_grenade_enable 1")
 	SendToServerConsole("mp_anyone_can_pickup_c4 1")
+	SendToServerConsole('mp_ct_default_grenades "weapon_incgrenade weapon_hegrenade weapon_flashbang weapon_smokegrenade"')
+	SendToServerConsole('mp_t_default_grenades "weapon_incgrenade weapon_hegrenade weapon_flashbang weapon_smokegrenade"')
 	SendToServerConsole("mp_restartgame 1")
 	SendToServerConsole("sv_grenade_trajectory_prac_pipreview 1")
 	
@@ -351,5 +368,4 @@ function printNadesForPlayer(playerpawn, nadeTypeFilter)
 
     print("Player not found with pawn:", playerpawn)
 end
-
 
