@@ -281,14 +281,37 @@ Convars:RegisterCommand( "pracc" , function (_, msg)
 	
 	if checkPlayerPawnForAdminStatus(user) then
 		if msg == "1" and praccEnabled == false then 
-			ScriptPrintMessageChatAll(" \x01 [ADMIN] \x10" .. " Starting Pracc mode!")
-			ScriptPrintMessageChatAll(" \x01 [ADMIN] \x10" .. " Starting Pracc mode!")
-			ScriptPrintMessageChatAll(" \x01 [ADMIN] \x10" .. " Starting Pracc mode!")
-			ScriptPrintMessageChatAll(" \x01 [ADMIN] \x10" .. " Commands:")
-			ScriptPrintMessageChatAll(" \x01 [ADMIN] \x10" .. " savenade mynade - saves a nade lineup with a given name!")
-			ScriptPrintMessageChatAll(" \x01 [ADMIN] \x10" .. " loadnade mynade - loads a nade lineup")
-			ScriptPrintMessageChatAll(" \x01 [ADMIN] \x10" .. ' importnade "code" - imports a nade from a nade code')
-			ScriptPrintMessageChatAll(" \x01 [ADMIN] \x10" .. " pracchelp - prints these commands in chat")
+			ScriptPrintMessageChatAll(" \x01 [ADMIN] \x03" .. " Starting Pracc mode!")
+			ScriptPrintMessageChatAll(" \x01 [ADMIN] \x03" .. " Starting Pracc mode!")
+			ScriptPrintMessageChatAll(" \x01 [ADMIN] \x03" .. " Starting Pracc mode!")
+			ScriptPrintMessageChatAll(" \x01---------------------------------------------------------------------------------")
+			ScriptPrintMessageChatAll(" \x03" .. "Commands:")
+			ScriptPrintMessageChatAll(" \x01---------------------------------------------------------------------------------")
+			ScriptPrintMessageChatAll(" \x03" .. 'savenade "mynade" "type" "description"')
+			ScriptPrintMessageChatAll(" \x0D" .. 'Saves a nade lineup with the given name, description and type')
+			ScriptPrintMessageChatAll(" \x0D" .. 'Valid types: smoke, he, falsh, molly')
+			ScriptPrintMessageChatAll(" \x01---------------------------------------------------------------------------------")
+			ScriptPrintMessageChatAll(" \x03" .. "loadnade mynade")
+			ScriptPrintMessageChatAll(" \x0D" .. "Loads a nade lineup")
+			ScriptPrintMessageChatAll(" \x01---------------------------------------------------------------------------------")
+			ScriptPrintMessageChatAll(" \x03" .. 'importnade "code"')
+			ScriptPrintMessageChatAll(" \x0D" .. 'Imports a nade from a nade code')
+			ScriptPrintMessageChatAll(" \x01---------------------------------------------------------------------------------")
+			ScriptPrintMessageChatAll(" \x03" .. "allsmoke")
+			ScriptPrintMessageChatAll(" \x0D" .. "Shows all saved smokes")
+			ScriptPrintMessageChatAll(" \x01---------------------------------------------------------------------------------")
+			ScriptPrintMessageChatAll(" \x03" .. "allmolly")
+			ScriptPrintMessageChatAll(" \x0D" .. "Shows all saved molotovs")
+			ScriptPrintMessageChatAll(" \x01---------------------------------------------------------------------------------")
+			ScriptPrintMessageChatAll(" \x03" .. "allhe")
+			ScriptPrintMessageChatAll(" \x0D" .. "Shows all saved HE nades")
+			ScriptPrintMessageChatAll(" \x01---------------------------------------------------------------------------------")
+			ScriptPrintMessageChatAll(" \x03" .. "allflash")
+			ScriptPrintMessageChatAll(" \x0D" .. "Shows all saved flashes")
+			ScriptPrintMessageChatAll(" \x01---------------------------------------------------------------------------------")
+			ScriptPrintMessageChatAll(" \x03" .. "pracchelp")
+			ScriptPrintMessageChatAll(" \x0D" .. "Prints these commands in chat")
+			ScriptPrintMessageChatAll(" \x01---------------------------------------------------------------------------------")
 			praccEnabled = true
 			roundStarted = true
 			if kzsettings == true then
@@ -306,14 +329,14 @@ Convars:RegisterCommand( "pracc" , function (_, msg)
 		end
 		
 		if msg == "0" and praccEnabled == true then
-			ScriptPrintMessageChatAll(" \x01 [ADMIN] \x10" .. " Exiting Pracc mode!")
-			ScriptPrintMessageChatAll(" \x01 [ADMIN] \x10" .. " Exiting Pracc mode!")
-			ScriptPrintMessageChatAll(" \x01 [ADMIN] \x10" .. " Exiting Pracc mode!")
-			ScriptPrintMessageChatAll(" \x01 [ADMIN] \x10" .. " Exiting Pracc mode!")
-			ScriptPrintMessageChatAll(" \x01 [ADMIN] \x10" .. " Exiting Pracc mode!")
-			ScriptPrintMessageChatAll(" \x01 [ADMIN] \x10" .. " Exiting Pracc mode!")
-			ScriptPrintMessageChatAll(" \x01 [ADMIN] \x10" .. " Exiting Pracc mode!")
-			ScriptPrintMessageChatAll(" \x01 [ADMIN] \x10" .. " Exiting Pracc mode!")
+			ScriptPrintMessageChatAll(" \x01 [ADMIN] \x03" .. " Exiting Pracc mode!")
+			ScriptPrintMessageChatAll(" \x01 [ADMIN] \x03" .. " Exiting Pracc mode!")
+			ScriptPrintMessageChatAll(" \x01 [ADMIN] \x03" .. " Exiting Pracc mode!")
+			ScriptPrintMessageChatAll(" \x01 [ADMIN] \x03" .. " Exiting Pracc mode!")
+			ScriptPrintMessageChatAll(" \x01 [ADMIN] \x03" .. " Exiting Pracc mode!")
+			ScriptPrintMessageChatAll(" \x01 [ADMIN] \x03" .. " Exiting Pracc mode!")
+			ScriptPrintMessageChatAll(" \x01 [ADMIN] \x03" .. " Exiting Pracc mode!")
+			ScriptPrintMessageChatAll(" \x01 [ADMIN] \x03" .. " Exiting Pracc mode!")
 			praccEnabled = false
 			roundStarted = false
 			StartWarmup()
@@ -321,12 +344,12 @@ Convars:RegisterCommand( "pracc" , function (_, msg)
 	end
 end, nil , FCVAR_PROTECTED)
 
-Convars:RegisterCommand( "savenade" , function (_, msg)
+Convars:RegisterCommand( "savenade" , function (_, msg, ntype, desc)
     local user = Convars:GetCommandClient()
 	
 	if checkPlayerPawnForAdminStatus(user) and praccEnabled == true then
 		
-		addNadeData(user, msg, user:GetAbsOrigin(), user:EyeAngles())
+		addNadeData(user, msg, ntype, desc, user:GetAbsOrigin(), user:EyeAngles())
 		
 		local formattedOrigin = string.format("%.2f %.2f %.2f", user:GetAbsOrigin().x, user:GetAbsOrigin().y, user:GetAbsOrigin().z)
 		local formattedAngle = string.format("%.2f %.2f %.2f", user:EyeAngles().x, user:EyeAngles().y, user:EyeAngles().z)
@@ -349,7 +372,16 @@ Convars:RegisterCommand( "loadnade" , function (_, msg)
 		local formattedOrigin = string.format("%.2f %.2f %.2f", retrievedNadeData.location.x, retrievedNadeData.location.y, retrievedNadeData.location.z)
 		local formattedAngle = string.format("%.2f %.2f %.2f", retrievedNadeData.angle.x, retrievedNadeData.angle.y, retrievedNadeData.angle.z)
 		
-		ScriptPrintMessageChatAll(' \x05' .. tostring(GetPlayerNameByPawn(user)) .. ' loaded a Nade! \x01 "' .. tostring(msg) .. ' ' .. formattedOrigin .. ' ' .. formattedAngle ..'"')
+		if retrievedNadeData.nadeType ~= nil then
+			ScriptPrintMessageChatAll(' \x05' .. tostring(GetPlayerNameByPawn(user)) .. ' loaded a ' .. retrievedNadeData.nadeType)
+		else
+			ScriptPrintMessageChatAll(' \x05' .. tostring(GetPlayerNameByPawn(user)) .. ' loaded a nade')
+		end
+		
+		if retrievedNadeData.description ~= nil then
+			ScriptPrintMessageChatAll(' \x05' .. retrievedNadeData.description)
+		end
+		ScriptPrintMessageChatAll(' \x01 "' .. tostring(msg) .. ' ' .. formattedOrigin .. ' ' .. formattedAngle ..'"')
 	end
 end, nil , FCVAR_PROTECTED)
 
@@ -360,7 +392,7 @@ Convars:RegisterCommand( "importnade" , function (_, msg)
 	
 	if checkPlayerPawnForAdminStatus(user) and praccEnabled == true then
 		
-		local nadeID, location, angle = parseNadeString(importString)
+		local nadeID, location, angle = addNadeDataFromString(user, importString, false)
 		
 		user:SetAbsOrigin(location)
 		user:SetAngles(angle.x, angle.y, angle.z)
@@ -370,16 +402,85 @@ Convars:RegisterCommand( "importnade" , function (_, msg)
 	end
 end, nil , FCVAR_PROTECTED)
 
+Convars:RegisterCommand( "initnades" , function (_, map, nType, desc, code)
+	local user = Convars:GetCommandClient()
+	local importString = tostring(code)
+	local mapString = tostring(map)
+	
+	if user == nil and praccEnabled == true and GetMapName() == map then
+		if desc ~= nil then
+			addNadeDataFromString(nil, importString, nType, desc, true)
+		else
+			addNadeDataFromString(nil, importString, " ", " ", true)
+		end
+	end	
+end, nil , FCVAR_PROTECTED)
+
+Convars:RegisterCommand( "allsmoke" , function ()
+    local user = Convars:GetCommandClient()
+	
+	if checkPlayerPawnForAdminStatus(user) and praccEnabled == true then
+		printNadesForPlayer(user, "smoke")
+	end
+end, nil , FCVAR_PROTECTED)
+
+Convars:RegisterCommand( "allmolly" , function ()
+    local user = Convars:GetCommandClient()
+	
+	if checkPlayerPawnForAdminStatus(user) and praccEnabled == true then
+		printNadesForPlayer(user, "molly")
+	end
+end, nil , FCVAR_PROTECTED)
+
+Convars:RegisterCommand( "allhe" , function ()
+    local user = Convars:GetCommandClient()
+	
+	if checkPlayerPawnForAdminStatus(user) and praccEnabled == true then
+		printNadesForPlayer(user, "he")
+	end
+end, nil , FCVAR_PROTECTED)
+
+Convars:RegisterCommand( "allflash" , function ()
+    local user = Convars:GetCommandClient()
+	
+	if checkPlayerPawnForAdminStatus(user) and praccEnabled == true then
+		printNadesForPlayer(user, "flash")
+	end
+end, nil , FCVAR_PROTECTED)
+
 Convars:RegisterCommand( "pracchelp" , function ()
     local user = Convars:GetCommandClient()
 	
 	if checkPlayerPawnForAdminStatus(user) and praccEnabled == true then
 		
-		ScriptPrintMessageChatAll(" \x01 [ADMIN] \x10" .. " Commands:")
-		ScriptPrintMessageChatAll(" \x01 [ADMIN] \x10" .. " savenade mynade - saves a nade lineup with a given name!")
-		ScriptPrintMessageChatAll(" \x01 [ADMIN] \x10" .. " loadnade mynade - loads a nade lineup")
-		ScriptPrintMessageChatAll(" \x01 [ADMIN] \x10" .. ' importnade "mynade 200 2500 100 -25 -140 0.00" - imports a nade from a nade code')
-		ScriptPrintMessageChatAll(" \x01 [ADMIN] \x10" .. " pracchelp - prints these commands in chat")
+		ScriptPrintMessageChatAll(" \x01---------------------------------------------------------------------------------")
+		ScriptPrintMessageChatAll(" \x03" .. "Commands:")
+		ScriptPrintMessageChatAll(" \x01---------------------------------------------------------------------------------")
+		ScriptPrintMessageChatAll(" \x03" .. 'savenade "mynade" "type" "description"')
+		ScriptPrintMessageChatAll(" \x0D" .. 'Saves a nade lineup with the given name, description and type')
+		ScriptPrintMessageChatAll(" \x0D" .. 'Valid types: smoke, he, falsh, molly')
+		ScriptPrintMessageChatAll(" \x01---------------------------------------------------------------------------------")
+		ScriptPrintMessageChatAll(" \x03" .. "loadnade mynade")
+		ScriptPrintMessageChatAll(" \x0D" .. "Loads a nade lineup")
+		ScriptPrintMessageChatAll(" \x01---------------------------------------------------------------------------------")
+		ScriptPrintMessageChatAll(" \x03" .. 'importnade "code"')
+		ScriptPrintMessageChatAll(" \x0D" .. 'Imports a nade from a nade code')
+		ScriptPrintMessageChatAll(" \x01---------------------------------------------------------------------------------")
+		ScriptPrintMessageChatAll(" \x03" .. "allsmoke")
+		ScriptPrintMessageChatAll(" \x0D" .. "Shows all saved smokes")
+		ScriptPrintMessageChatAll(" \x01---------------------------------------------------------------------------------")
+		ScriptPrintMessageChatAll(" \x03" .. "allmolly")
+		ScriptPrintMessageChatAll(" \x0D" .. "Shows all saved molotovs")
+		ScriptPrintMessageChatAll(" \x01---------------------------------------------------------------------------------")
+		ScriptPrintMessageChatAll(" \x03" .. "allhe")
+		ScriptPrintMessageChatAll(" \x0D" .. "Shows all saved HE nades")
+		ScriptPrintMessageChatAll(" \x01---------------------------------------------------------------------------------")
+		ScriptPrintMessageChatAll(" \x03" .. "allflash")
+		ScriptPrintMessageChatAll(" \x0D" .. "Shows all saved flashes")
+		ScriptPrintMessageChatAll(" \x01---------------------------------------------------------------------------------")
+		ScriptPrintMessageChatAll(" \x03" .. "pracchelp")
+		ScriptPrintMessageChatAll(" \x0D" .. "Prints these commands in chat")
+		ScriptPrintMessageChatAll(" \x01---------------------------------------------------------------------------------")
 		
 	end
 end, nil , FCVAR_PROTECTED)
@@ -389,18 +490,18 @@ Convars:RegisterCommand( "adminhelp" , function ()
 	
 	if checkPlayerPawnForAdminStatus(user) and praccEnabled == true then
 		
-		ScriptPrintMessageChatAll(" \x01 [ADMIN] \x10" .. " Commands:")
-		ScriptPrintMessageChatAll(" \x01 [ADMIN] \x10" .. " adminsay hello - prints a message in chat with a admin nametag")
-		ScriptPrintMessageChatAll(" \x01 [ADMIN] \x10" .. " startpug - starts the pug")
-		ScriptPrintMessageChatAll(" \x01 [ADMIN] \x10" .. ' pausepug - pauses the pug')
-		ScriptPrintMessageChatAll(" \x01 [ADMIN] \x10" .. " unpausepug - unpauses the pug")
-		ScriptPrintMessageChatAll(" \x01 [ADMIN] \x10" .. " restartpug - compleatly restarts the pug")
-		ScriptPrintMessageChatAll(" \x01 [ADMIN] \x10" .. " scramble - shuffles teams")
-		ScriptPrintMessageChatAll(" \x01 [ADMIN] \x10" .. " rewarmup - restarts warmup phase")
-		ScriptPrintMessageChatAll(" \x01 [ADMIN] \x10" .. " pugkick id - kicks the player")
-		ScriptPrintMessageChatAll(" \x01 [ADMIN] \x10" .. " unpausepug - unpauses the pug")
-		ScriptPrintMessageChatAll(" \x01 [ADMIN] \x10" .. " changemap de_dust2 - changes map")
-		ScriptPrintMessageChatAll(" \x01 [ADMIN] \x10" .. " adminhelp - prints these commands in chat")
+		ScriptPrintMessageChatAll(" \x01 [ADMIN] \x0B" .. " Commands:")
+		ScriptPrintMessageChatAll(" \x01 [ADMIN] \x0B" .. " adminsay hello - prints a message in chat with a admin nametag")
+		ScriptPrintMessageChatAll(" \x01 [ADMIN] \x0B" .. " startpug - starts the pug")
+		ScriptPrintMessageChatAll(" \x01 [ADMIN] \x0B" .. ' pausepug - pauses the pug')
+		ScriptPrintMessageChatAll(" \x01 [ADMIN] \x0B" .. " unpausepug - unpauses the pug")
+		ScriptPrintMessageChatAll(" \x01 [ADMIN] \x0B" .. " restartpug - compleatly restarts the pug")
+		ScriptPrintMessageChatAll(" \x01 [ADMIN] \x0B" .. " scramble - shuffles teams")
+		ScriptPrintMessageChatAll(" \x01 [ADMIN] \x0B" .. " rewarmup - restarts warmup phase")
+		ScriptPrintMessageChatAll(" \x01 [ADMIN] \x0B" .. " pugkick id - kicks the player")
+		ScriptPrintMessageChatAll(" \x01 [ADMIN] \x0B" .. " unpausepug - unpauses the pug")
+		ScriptPrintMessageChatAll(" \x01 [ADMIN] \x0B" .. " changemap de_dust2 - changes map")
+		ScriptPrintMessageChatAll(" \x01 [ADMIN] \x0B" .. " adminhelp - prints these commands in chat")
 	end
 end, nil , FCVAR_PROTECTED)
 
