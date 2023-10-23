@@ -204,6 +204,10 @@ function setPraccSettings()
 	SendToServerConsole("mp_anyone_can_pickup_c4 1")
 	SendToServerConsole("mp_restartgame 1")
 	SendToServerConsole("sv_grenade_trajectory_prac_pipreview 1")
+	
+	if loadPraccNades == true then
+		SendToServerConsole("exec dea_pugplugin_praccnades")
+	end
 end
 
 function checkPlayerPawnForAdminStatus(playerPawnToCheck)
@@ -243,12 +247,14 @@ function checkAdmin(steamid, event)
 	end
 end
 
-function addNadeData(playerpawn, nadeID, locationVector, angleVector)
-    for _, playerData in pairs(connectedPlayers) do
+function addNadeData(playerpawn, nadeID, ntype, desc, locationVector, angleVector)
+	for _, playerData in pairs(connectedPlayers) do
         if playerData.playerpawn == playerpawn then
             playerData.savedNades[nadeID] = {
                 location = locationVector,
-                angle = angleVector
+                angle = angleVector,
+				description = desc,
+				nadeType =  ntype
             }
             return
         end
@@ -266,21 +272,84 @@ function GetSavedNadeByPawnAndID(playerpawn, nadeID)
     print("Player pawn or nadeID not found")
 end
 
-function parseNadeString(s)
+function addNadeDataFromString(playerpawn, s, nType, desc, importToAll)
+    -- Split the string by spaces
     local parts = {}
     for part in string.gmatch(s, "%S+") do
         table.insert(parts, part)
     end
 
+    -- Ensure there are 7 parts: nadeID, x, y, z, pitch, yaw, roll
     if #parts ~= 7 then
-        return nil, "Invalid string format"
+        return false, "Invalid string format"
     end
 
     local nadeID = parts[1]
     local location = Vector(tonumber(parts[2]), tonumber(parts[3]), tonumber(parts[4]))
     local angle = Vector(tonumber(parts[5]), tonumber(parts[6]), tonumber(parts[7]))
 
-    return nadeID, location, angle
+    if importToAll then
+        -- Import to every player in connectedPlayers
+        for _, playerData in pairs(connectedPlayers) do
+            playerData.savedNades[nadeID] = {
+                location = location,
+                angle = angle,
+				description = desc,
+				nadeType =  nType
+            }
+        end
+        return true
+    else
+        -- Find the player with the matching pawn in connectedPlayers
+        for _, playerData in pairs(connectedPlayers) do
+            if playerData.playerpawn == playerpawn then
+                playerData.savedNades[nadeID] = {
+                    location = location,
+                    angle = angle
+                }
+                return nadeID, location, angle
+            end
+        end
+    end
+
+    -- If we reach here, the player was not found (only applicable when importToAll is false)
+    return false, "Player not found"
+end
+
+function printNadesForPlayer(playerpawn, nadeTypeFilter)
+    -- Find the player with the matching pawn in connectedPlayers
+    for _, playerData in pairs(connectedPlayers) do
+        if playerData.playerpawn == playerpawn then
+            -- Check if the player has saved nades
+            if not playerData.savedNades or next(playerData.savedNades) == nil then
+                print("No nades saved for player:", playerData.name)
+                return
+            end
+
+            local nadeFound = false  -- To track if at least one nade of the specified type is found
+
+            -- Iterate over saved nades and print details of those that match the nadeType
+            for nadeID, nadeData in pairs(playerData.savedNades) do
+                if nadeData.nadeType == nadeTypeFilter then
+                    local desc = nadeData.description
+					local nType = nadeData.nadeType
+					ScriptPrintMessageChatAll(" \x01---------------------------------------------------------------------------------")
+					ScriptPrintMessageChatAll(" \x05 Type: " .. nType)
+					ScriptPrintMessageChatAll(" \x0D Command: \x06loadnade " .. nadeID)
+					ScriptPrintMessageChatAll(" \x10" .. desc)
+                    nadeFound = true
+                end
+            end
+
+            if not nadeFound then
+                print("No nades of type", nadeTypeFilter, "found for player:", playerData.name)
+            end
+
+            return  -- Exit after printing nades for the specified player
+        end
+    end
+
+    print("Player not found with pawn:", playerpawn)
 end
 
 
