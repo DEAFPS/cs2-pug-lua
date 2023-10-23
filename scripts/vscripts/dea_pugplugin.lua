@@ -365,7 +365,7 @@ Convars:RegisterCommand( "importnade" , function (_, msg)
 		user:SetAbsOrigin(location)
 		user:SetAngles(angle.x, angle.y, angle.z)
 		
-		ScriptPrintMessageChatAll(" \x05" .. tostring(GetPlayerNameByPawn(user)) .. " loaded a imported Nade! \x01 " .. tostring(importString))
+		ScriptPrintMessageChatAll(" \x05" .. tostring(GetPlayerNameByPawn(user)) .. ' loaded a imported Nade! \x01 "' .. tostring(importString) .. '"')
 		
 	end
 end, nil , FCVAR_PROTECTED)
