@@ -249,7 +249,7 @@ Convars:RegisterCommand("changemap", function (_, map)
 end, nil, 0)
 
 Convars:RegisterCommand( "pugkick" , function (_, id)
-        local userid = tostring (id)
+        local userid = tostring(id)
         local user = Convars:GetCommandClient()
 	
 	if checkPlayerPawnForAdminStatus(user) then
@@ -360,13 +360,22 @@ Convars:RegisterCommand( "savenade" , function (_, msg, ntype, desc)
 	end
 end, nil , FCVAR_PROTECTED)
 
+
 Convars:RegisterCommand( "loadnade" , function (_, msg)
     local user = Convars:GetCommandClient()
 	
 	if checkPlayerPawnForAdminStatus(user) and praccEnabled == true then
 		
+		local ClientCmd = Entities:FindByClassname(nil, "point_clientcommand")
+		
+		if ClientCmd == nil then
+			ClientCmd = SpawnEntityFromTableSynchronous("point_clientcommand", { targetname = "vscript_clientcommand" })
+		else
+			--clientCmd already there
+		end
+		
 		local retrievedNadeData = GetSavedNadeByPawnAndID(user, msg)
-		user:SetAbsOrigin(retrievedNadeData.location)
+		user:SetAbsOrigin(retrievedNadeData.location + Vector(0, 0, 25)) --adding +25 for z coordinate as workaround for player being spawned slightly in the ground
 		user:SetAngles(retrievedNadeData.angle.x, retrievedNadeData.angle.y, retrievedNadeData.angle.z)
 		
 		local formattedOrigin = string.format("%.2f %.2f %.2f", retrievedNadeData.location.x, retrievedNadeData.location.y, retrievedNadeData.location.z)
@@ -378,8 +387,44 @@ Convars:RegisterCommand( "loadnade" , function (_, msg)
 			ScriptPrintMessageChatAll(' \x05' .. tostring(GetPlayerNameByPawn(user)) .. ' loaded a nade')
 		end
 		
+		if retrievedNadeData.nadeType == "smoke" then
+			DoEntFireByInstanceHandle(ClientCmd, "command", "slot8", 0.1, user, user)
+		end
+		
+		if retrievedNadeData.nadeType == "molly" then
+			DoEntFireByInstanceHandle(ClientCmd, "command", "slot10", 0.1, user, user)
+		end
+		
+		if retrievedNadeData.nadeType == "he" then
+			DoEntFireByInstanceHandle(ClientCmd, "command", "slot6", 0.1, user, user)
+		end
+		
+		if retrievedNadeData.nadeType == "flash" then
+			DoEntFireByInstanceHandle(ClientCmd, "command", "slot7", 0.1, user, user)
+		end
+		
 		if retrievedNadeData.description ~= nil then
 			ScriptPrintMessageChatAll(' \x05' .. retrievedNadeData.description)
+			
+			local timer_sec = 50
+			
+			if Timers:TimerExists(nade_desc_timer) then
+				Timers:RemoveTimer("nade_desc_timer")
+			end
+			
+			Timers:CreateTimer("nade_desc_timer", {
+				callback = function()
+					if timer_sec <= 0 then
+						Timers:RemoveTimer("nade_desc_timer")
+					else
+						FireGameEvent("show_survival_respawn_status", {["loc_token"] = "<font color=\"yellow\">" .. retrievedNadeData.description .."</font>", ["duration"] = 10, ["userid"] = GetUserIDByPawn(user)})
+						timer_sec = timer_sec - 1
+					end
+					return 0.1
+				end,
+			})
+			
+			
 		end
 		ScriptPrintMessageChatAll(' \x01 "' .. tostring(msg) .. ' ' .. formattedOrigin .. ' ' .. formattedAngle ..'"')
 	end
@@ -387,11 +432,9 @@ end, nil , FCVAR_PROTECTED)
 
 Convars:RegisterCommand( "importnade" , function (_, msg)
     local user = Convars:GetCommandClient()
-	local importString = tostring(msg)
-	print(importString)
 	
 	if checkPlayerPawnForAdminStatus(user) and praccEnabled == true then
-		
+		local importString = tostring(msg)
 		local nadeID, location, angle = addNadeDataFromString(user, importString, false)
 		
 		user:SetAbsOrigin(location)
@@ -404,10 +447,9 @@ end, nil , FCVAR_PROTECTED)
 
 Convars:RegisterCommand( "initnades" , function (_, map, nType, desc, code)
 	local user = Convars:GetCommandClient()
-	local importString = tostring(code)
-	local mapString = tostring(map)
 	
 	if user == nil and praccEnabled == true and GetMapName() == map then
+		local importString = tostring(code)
 		if desc ~= nil then
 			addNadeDataFromString(nil, importString, nType, desc, true)
 		else
@@ -445,6 +487,26 @@ Convars:RegisterCommand( "allflash" , function ()
 	
 	if checkPlayerPawnForAdminStatus(user) and praccEnabled == true then
 		printNadesForPlayer(user, "flash")
+	end
+end, nil , FCVAR_PROTECTED)
+
+Convars:RegisterCommand( "killsmoke" , function ()
+    local user = Convars:GetCommandClient()
+	
+	if checkPlayerPawnForAdminStatus(user) and praccEnabled == true then
+		DoEntFire("smokegrenade_projectile", "kill", nil, 0, nil, nil)
+		DoEntFire("molotov_projectile", "kill", nil, 0, nil, nil)
+		user:SetMaxHealth(thisClass.health)
+		user:SetHealth(thisClass.health)
+	end
+end, nil , FCVAR_PROTECTED)
+
+Convars:RegisterCommand( "godmode" , function ()
+    local user = Convars:GetCommandClient()
+	
+	if checkPlayerPawnForAdminStatus(user) and praccEnabled == true then
+		user:SetMaxHealth(2147483647)
+		user:SetHealth(2147483647)
 	end
 end, nil , FCVAR_PROTECTED)
 
