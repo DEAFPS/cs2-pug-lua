@@ -30,6 +30,7 @@ Lua Patcher (use if you are not using MetaMod, and make sure your server runs -i
 * To add admins edit the `adminPlayers` table in `pug_cfg.lua`
 
 ## Admin Commands
+- `adminhelp`            --prints these commands into chat
 - `adminsay hello`       --prints a message in chat with a admin nametag
 - `startpug`             --starts the pug
 - `pausepug`             --pauses the pug
@@ -39,6 +40,12 @@ Lua Patcher (use if you are not using MetaMod, and make sure your server runs -i
 - `rewarmup`             --restarts warmup phase
 - `pugkick id`           --kicks the player (use `status` to get the player id you want to kick)
 - `changemap de_dust2`   --changes map
+
+## Admin Commands
+- `savenade mynade`      --saves a nade lineup with a given name
+- `loadnade mynade`      --loads a nade lineup")
+- `importnade` "mynade 200 2500 100 -25 -140 0.00" --imports a nade from a nade code
+- `pracchelp`            --prints these commands in chat
 
 ## Author
 [@DEAFPS_](https://twitter.com/deafps_)
