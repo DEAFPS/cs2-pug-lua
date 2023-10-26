@@ -276,42 +276,12 @@ end, nil , FCVAR_PROTECTED)
 
 praccEnabled = false
 
-Convars:RegisterCommand( "pracc" , function (_, msg)
+Convars:RegisterCommand( "pracc" , function ()
     local user = Convars:GetCommandClient()
 	
 	if checkPlayerPawnForAdminStatus(user) then
-		if msg == "1" and praccEnabled == false then 
-			ScriptPrintMessageChatAll(" \x01 [ADMIN] \x03" .. " Starting Pracc mode!")
-			ScriptPrintMessageChatAll(" \x01 [ADMIN] \x03" .. " Starting Pracc mode!")
-			ScriptPrintMessageChatAll(" \x01 [ADMIN] \x03" .. " Starting Pracc mode!")
-			ScriptPrintMessageChatAll(" \x01---------------------------------------------------------------------------------")
-			ScriptPrintMessageChatAll(" \x03" .. "Commands:")
-			ScriptPrintMessageChatAll(" \x01---------------------------------------------------------------------------------")
-			ScriptPrintMessageChatAll(" \x03" .. 'savenade "mynade" "type" "description"')
-			ScriptPrintMessageChatAll(" \x0D" .. 'Saves a nade lineup with the given name, description and type')
-			ScriptPrintMessageChatAll(" \x0D" .. 'Valid types: smoke, he, falsh, molly')
-			ScriptPrintMessageChatAll(" \x01---------------------------------------------------------------------------------")
-			ScriptPrintMessageChatAll(" \x03" .. "loadnade mynade")
-			ScriptPrintMessageChatAll(" \x0D" .. "Loads a nade lineup")
-			ScriptPrintMessageChatAll(" \x01---------------------------------------------------------------------------------")
-			ScriptPrintMessageChatAll(" \x03" .. 'importnade "code"')
-			ScriptPrintMessageChatAll(" \x0D" .. 'Imports a nade from a nade code')
-			ScriptPrintMessageChatAll(" \x01---------------------------------------------------------------------------------")
-			ScriptPrintMessageChatAll(" \x03" .. "allsmoke")
-			ScriptPrintMessageChatAll(" \x0D" .. "Shows all saved smokes")
-			ScriptPrintMessageChatAll(" \x01---------------------------------------------------------------------------------")
-			ScriptPrintMessageChatAll(" \x03" .. "allmolly")
-			ScriptPrintMessageChatAll(" \x0D" .. "Shows all saved molotovs")
-			ScriptPrintMessageChatAll(" \x01---------------------------------------------------------------------------------")
-			ScriptPrintMessageChatAll(" \x03" .. "allhe")
-			ScriptPrintMessageChatAll(" \x0D" .. "Shows all saved HE nades")
-			ScriptPrintMessageChatAll(" \x01---------------------------------------------------------------------------------")
-			ScriptPrintMessageChatAll(" \x03" .. "allflash")
-			ScriptPrintMessageChatAll(" \x0D" .. "Shows all saved flashes")
-			ScriptPrintMessageChatAll(" \x01---------------------------------------------------------------------------------")
-			ScriptPrintMessageChatAll(" \x03" .. "pracchelp")
-			ScriptPrintMessageChatAll(" \x0D" .. "Prints these commands in chat")
-			ScriptPrintMessageChatAll(" \x01---------------------------------------------------------------------------------")
+		if praccEnabled == false then 
+			printPraccHelp()
 			praccEnabled = true
 			roundStarted = true
 			if kzsettings == true then
@@ -326,9 +296,7 @@ Convars:RegisterCommand( "pracc" , function (_, msg)
 			end
 			
 			setPraccSettings()
-		end
-		
-		if msg == "0" and praccEnabled == true then
+		elseif praccEnabled == true then
 			ScriptPrintMessageChatAll(" \x01 [ADMIN] \x03" .. " Exiting Pracc mode!")
 			ScriptPrintMessageChatAll(" \x01 [ADMIN] \x03" .. " Exiting Pracc mode!")
 			ScriptPrintMessageChatAll(" \x01 [ADMIN] \x03" .. " Exiting Pracc mode!")
@@ -344,42 +312,108 @@ Convars:RegisterCommand( "pracc" , function (_, msg)
 	end
 end, nil , FCVAR_PROTECTED)
 
+currentlySavingNade = false
+
 Convars:RegisterCommand( "savenade" , function (_, msg, ntype, desc)
     local user = Convars:GetCommandClient()
 	
 	if checkPlayerPawnForAdminStatus(user) and praccEnabled == true then
 		
-		addNadeData(user, msg, ntype, desc, user:GetAbsOrigin(), user:EyeAngles())
+		currentlySavingNade = true
+
+		local playerData = connectedPlayers[GetUserIDByPawn(user)]
+		if playerData then
+			playerData.tempNadeName = msg
+			playerData.tempNadeDesc = desc
+			playerData.tempNadeType = ntype
+		end
+		
+		for _, playerData in pairs(connectedPlayers) do
+			if playerData.playerpawn == playerpawn then
+				playerData.savedNades[nadeID] = {
+					location = locationVector,
+					angle = angleVector,
+					description = desc,
+					nadeType =  ntype,
+					indicator = indicatorXYZ
+				}
+				return
+			end
+		end
+		
+		
+		local timer_sec = 640
+			
+		if Timers:TimerExists(savingNadeInfoTimer) then
+			Timers:RemoveTimer("savingNadeInfoTimer")
+		end
+		
+		Timers:CreateTimer("savingNadeInfoTimer", {
+			callback = function()
+				if timer_sec <= 0 then
+					Timers:RemoveTimer("savingNadeInfoTimer")
+				else
+					FireGameEvent("show_survival_respawn_status", {["loc_token"] = "<font color=\"yellow\">First lineup your nade and then press [MOUSE3] to save a lineup!</font>", ["duration"] = 10, ["userid"] = GetUserIDByPawn(user)})
+					timer_sec = timer_sec - 1
+				end
+				return 0.015625
+			end,
+		})
+
+	end
+end, nil , FCVAR_PROTECTED)
+
+function savingNade(event)
+
+	if currentlySavingNade == true then
+		local user = GetPlayerPawnByID(event.userid)
+		
+		local indicatorXYZvec = Vector(event.x, event.y, event.z)
+		local nadeName, nadeDesc, nadeType = GetTempNadeDataByPawn(user)
+		
+		addNadeData(user, nadeName, nadeType, nadeDesc, user:GetLocalOrigin(), user:EyeAngles(), indicatorXYZvec)
 		
 		local formattedOrigin = string.format("%.2f %.2f %.2f", user:GetAbsOrigin().x, user:GetAbsOrigin().y, user:GetAbsOrigin().z)
 		local formattedAngle = string.format("%.2f %.2f %.2f", user:EyeAngles().x, user:EyeAngles().y, user:EyeAngles().z)
 		
-		ScriptPrintMessageChatAll(' \x05' .. tostring(GetPlayerNameByPawn(user)) .. ' saved a Nade! \x01 "' .. tostring(msg) .. ' ' .. formattedOrigin .. ' ' .. formattedAngle ..'"')
-		
-		
-	end
-end, nil , FCVAR_PROTECTED)
+		local formattedIndicator = string.format("%.2f %.2f %.2f", indicatorXYZvec.x, indicatorXYZvec.y, indicatorXYZvec.z)
 
+		
+		ScriptPrintMessageChatAll(' \x05' .. tostring(GetPlayerNameByPawn(user)) .. ' saved a Nade! \x01 "' .. tostring(nadeName) .. ' ' .. formattedOrigin .. ' ' .. formattedAngle .. ' ' .. formattedIndicator .. '"')
+		currentlySavingNade = false
+		print('"' .. tostring(nadeName) .. ' ' .. formattedOrigin .. ' ' .. formattedAngle .. ' ' .. formattedIndicator .. '"')
+		--print("A new nade saved")
+		
+		makeNadeAngIndicator(user, indicatorXYZvec, user:EyeAngles())
+		
+		sendClientCMD("play sounds/ui/item_drop.vsnd", user)
+	else
+		return
+	end
+end
 
 Convars:RegisterCommand( "loadnade" , function (_, msg)
     local user = Convars:GetCommandClient()
 	
 	if checkPlayerPawnForAdminStatus(user) and praccEnabled == true then
 		
-		local ClientCmd = Entities:FindByClassname(nil, "point_clientcommand")
+		local retrievedNadeData = GetSavedNadeByPawnAndID(user, msg)
 		
-		if ClientCmd == nil then
-			ClientCmd = SpawnEntityFromTableSynchronous("point_clientcommand", { targetname = "vscript_clientcommand" })
-		else
-			--clientCmd already there
+		if retrievedNadeData == nil then
+			ScriptPrintMessageChatAll(' \x07' .. tostring(GetPlayerNameByPawn(user)) .. '>> ERROR NO SUCH SAVED NADE')
+			return
 		end
 		
-		local retrievedNadeData = GetSavedNadeByPawnAndID(user, msg)
-		user:SetAbsOrigin(retrievedNadeData.location + Vector(0, 0, 25)) --adding +25 for z coordinate as workaround for player being spawned slightly in the ground
+		user:SetLocalOrigin(retrievedNadeData.location + Vector(0, 0, 5)) --adding 5 for z coordinate as workaround for player being spawned slightly in the ground
 		user:SetAngles(retrievedNadeData.angle.x, retrievedNadeData.angle.y, retrievedNadeData.angle.z)
 		
 		local formattedOrigin = string.format("%.2f %.2f %.2f", retrievedNadeData.location.x, retrievedNadeData.location.y, retrievedNadeData.location.z)
 		local formattedAngle = string.format("%.2f %.2f %.2f", retrievedNadeData.angle.x, retrievedNadeData.angle.y, retrievedNadeData.angle.z)
+		local formattedIndicator = " "
+		
+		if retrievedNadeData.indicator ~= nil then
+			formattedIndicator = string.format("%.2f %.2f %.2f", retrievedNadeData.indicator.x, retrievedNadeData.indicator.y, retrievedNadeData.indicator.z)
+		end
 		
 		if retrievedNadeData.nadeType ~= nil then
 			ScriptPrintMessageChatAll(' \x05' .. tostring(GetPlayerNameByPawn(user)) .. ' loaded a ' .. retrievedNadeData.nadeType)
@@ -388,25 +422,25 @@ Convars:RegisterCommand( "loadnade" , function (_, msg)
 		end
 		
 		if retrievedNadeData.nadeType == "smoke" then
-			DoEntFireByInstanceHandle(ClientCmd, "command", "slot8", 0.1, user, user)
+			sendClientCMD("slot8", user)
 		end
 		
 		if retrievedNadeData.nadeType == "molly" then
-			DoEntFireByInstanceHandle(ClientCmd, "command", "slot10", 0.1, user, user)
+			sendClientCMD("slot10", user)
 		end
 		
 		if retrievedNadeData.nadeType == "he" then
-			DoEntFireByInstanceHandle(ClientCmd, "command", "slot6", 0.1, user, user)
+			sendClientCMD("slot6", user)
 		end
 		
 		if retrievedNadeData.nadeType == "flash" then
-			DoEntFireByInstanceHandle(ClientCmd, "command", "slot7", 0.1, user, user)
+			sendClientCMD("slot7", user)
 		end
 		
 		if retrievedNadeData.description ~= nil then
 			ScriptPrintMessageChatAll(' \x05' .. retrievedNadeData.description)
 			
-			local timer_sec = 50
+			local timer_sec = 320
 			
 			if Timers:TimerExists(nade_desc_timer) then
 				Timers:RemoveTimer("nade_desc_timer")
@@ -420,13 +454,18 @@ Convars:RegisterCommand( "loadnade" , function (_, msg)
 						FireGameEvent("show_survival_respawn_status", {["loc_token"] = "<font color=\"yellow\">" .. retrievedNadeData.description .."</font>", ["duration"] = 10, ["userid"] = GetUserIDByPawn(user)})
 						timer_sec = timer_sec - 1
 					end
-					return 0.1
+					return 0.015625
 				end,
 			})
 			
 			
 		end
-		ScriptPrintMessageChatAll(' \x01 "' .. tostring(msg) .. ' ' .. formattedOrigin .. ' ' .. formattedAngle ..'"')
+		ScriptPrintMessageChatAll(' \x01 "' .. tostring(msg) .. ' ' .. formattedOrigin .. ' ' .. formattedAngle ..' ' .. formattedIndicator .. '"')
+		
+		makeNadeAngIndicator(user, retrievedNadeData.indicator, retrievedNadeData.angle)
+		
+		sendClientCMD("play sounds/buttons/blip1.vsnd", user)
+		
 	end
 end, nil , FCVAR_PROTECTED)
 
@@ -514,56 +553,46 @@ Convars:RegisterCommand( "pracchelp" , function ()
     local user = Convars:GetCommandClient()
 	
 	if checkPlayerPawnForAdminStatus(user) and praccEnabled == true then
-		
-		ScriptPrintMessageChatAll(" \x01---------------------------------------------------------------------------------")
-		ScriptPrintMessageChatAll(" \x03" .. "Commands:")
-		ScriptPrintMessageChatAll(" \x01---------------------------------------------------------------------------------")
-		ScriptPrintMessageChatAll(" \x03" .. 'savenade "mynade" "type" "description"')
-		ScriptPrintMessageChatAll(" \x0D" .. 'Saves a nade lineup with the given name, description and type')
-		ScriptPrintMessageChatAll(" \x0D" .. 'Valid types: smoke, he, falsh, molly')
-		ScriptPrintMessageChatAll(" \x01---------------------------------------------------------------------------------")
-		ScriptPrintMessageChatAll(" \x03" .. "loadnade mynade")
-		ScriptPrintMessageChatAll(" \x0D" .. "Loads a nade lineup")
-		ScriptPrintMessageChatAll(" \x01---------------------------------------------------------------------------------")
-		ScriptPrintMessageChatAll(" \x03" .. 'importnade "code"')
-		ScriptPrintMessageChatAll(" \x0D" .. 'Imports a nade from a nade code')
-		ScriptPrintMessageChatAll(" \x01---------------------------------------------------------------------------------")
-		ScriptPrintMessageChatAll(" \x03" .. "allsmoke")
-		ScriptPrintMessageChatAll(" \x0D" .. "Shows all saved smokes")
-		ScriptPrintMessageChatAll(" \x01---------------------------------------------------------------------------------")
-		ScriptPrintMessageChatAll(" \x03" .. "allmolly")
-		ScriptPrintMessageChatAll(" \x0D" .. "Shows all saved molotovs")
-		ScriptPrintMessageChatAll(" \x01---------------------------------------------------------------------------------")
-		ScriptPrintMessageChatAll(" \x03" .. "allhe")
-		ScriptPrintMessageChatAll(" \x0D" .. "Shows all saved HE nades")
-		ScriptPrintMessageChatAll(" \x01---------------------------------------------------------------------------------")
-		ScriptPrintMessageChatAll(" \x03" .. "allflash")
-		ScriptPrintMessageChatAll(" \x0D" .. "Shows all saved flashes")
-		ScriptPrintMessageChatAll(" \x01---------------------------------------------------------------------------------")
-		ScriptPrintMessageChatAll(" \x03" .. "pracchelp")
-		ScriptPrintMessageChatAll(" \x0D" .. "Prints these commands in chat")
-		ScriptPrintMessageChatAll(" \x01---------------------------------------------------------------------------------")
-		
+		printPraccHelp()
 	end
 end, nil , FCVAR_PROTECTED)
+
+local knifeCommands = {
+    bayonet = "500",
+    butterfly = "515",
+    karambit = "507",
+    m9 = "508",
+    skeleton = "525",
+    talon = "523",
+    classic = "503",
+    stiletto = "522",
+    flip = "505",
+    ursus = "519",
+    paracord = "517",
+    survival = "518",
+    huntsman = "509",
+    falchion = "512",
+    bowie = "514",
+    daggers = "516",
+    gut = "506",
+    navaja = "520"
+}
+
+Convars:RegisterCommand("knife", function(_, knife)
+    if checkPlayerPawnForAdminStatus(user) and praccEnabled == true then
+	
+		local command = knifeCommands[knife]
+		if command then
+			SendToServerConsole("subclass_change " .. command .. " weapon_knife")
+		end
+	end
+end, nil, FCVAR_PROTECTED)
 
 Convars:RegisterCommand( "adminhelp" , function ()
     local user = Convars:GetCommandClient()
 	
 	if checkPlayerPawnForAdminStatus(user) and praccEnabled == true then
-		
-		ScriptPrintMessageChatAll(" \x01 [ADMIN] \x0B" .. " Commands:")
-		ScriptPrintMessageChatAll(" \x01 [ADMIN] \x0B" .. " adminsay hello - prints a message in chat with a admin nametag")
-		ScriptPrintMessageChatAll(" \x01 [ADMIN] \x0B" .. " startpug - starts the pug")
-		ScriptPrintMessageChatAll(" \x01 [ADMIN] \x0B" .. ' pausepug - pauses the pug')
-		ScriptPrintMessageChatAll(" \x01 [ADMIN] \x0B" .. " unpausepug - unpauses the pug")
-		ScriptPrintMessageChatAll(" \x01 [ADMIN] \x0B" .. " restartpug - compleatly restarts the pug")
-		ScriptPrintMessageChatAll(" \x01 [ADMIN] \x0B" .. " scramble - shuffles teams")
-		ScriptPrintMessageChatAll(" \x01 [ADMIN] \x0B" .. " rewarmup - restarts warmup phase")
-		ScriptPrintMessageChatAll(" \x01 [ADMIN] \x0B" .. " pugkick id - kicks the player")
-		ScriptPrintMessageChatAll(" \x01 [ADMIN] \x0B" .. " unpausepug - unpauses the pug")
-		ScriptPrintMessageChatAll(" \x01 [ADMIN] \x0B" .. " changemap de_dust2 - changes map")
-		ScriptPrintMessageChatAll(" \x01 [ADMIN] \x0B" .. " adminhelp - prints these commands in chat")
+		printAdminHelp()
 	end
 end, nil , FCVAR_PROTECTED)
 
@@ -595,31 +624,31 @@ function PrintWaitingforPlayers(event)
 						return 1
 					end,
 			})
+		else
+			return
 		end
 	end
 	
 end
 
 function PlayerVotes(event)
-	if (roundStarted == false) and votingEnabled == true then
 		
-		local readyNeeded = 2 * teamSize
-		
-		if tableContains(playersThatVoted, event.userid) then
-			removeFromVoted(event.userid)
-			if autokickOnMapChange == true then
-				HC_PrintChatAll_pug( " {lightgray}" .. tostring(GetPlayerNameByID(event.userid)) .. " is not ready! {green}Players voted: " .. #playersThatVoted)
-			end
-		elseif not tableContains(playersThatVoted, event.userid) then
-			table.insert(playersThatVoted, event.userid)
-			if autokickOnMapChange == true then
-				HC_PrintChatAll_pug( " {lightgray}" .. tostring(GetPlayerNameByID(event.userid)) .. " is ready! {green}Players voted: " .. #playersThatVoted)
-			end
-		end
+	local readyNeeded = 2 * teamSize
 	
-		if #playersThatVoted == readyNeeded then
-			StartPug("[Ready]")
+	if tableContains(playersThatVoted, event.userid) then
+		removeFromVoted(event.userid)
+		if autokickOnMapChange == true then
+			HC_PrintChatAll_pug( " {lightgray}" .. tostring(GetPlayerNameByID(event.userid)) .. " is not ready! {green}Players voted: " .. #playersThatVoted)
 		end
+	elseif not tableContains(playersThatVoted, event.userid) then
+		table.insert(playersThatVoted, event.userid)
+		if autokickOnMapChange == true then
+			HC_PrintChatAll_pug( " {lightgray}" .. tostring(GetPlayerNameByID(event.userid)) .. " is ready! {green}Players voted: " .. #playersThatVoted)
+		end
+	end
+	
+	if #playersThatVoted == readyNeeded then
+		StartPug("[Ready]")
 	end
 end
 
@@ -639,7 +668,10 @@ function OnPlayerConnect(event)
 		address = event.address,
 		playerpawn = " ",
 		admin = checkAdmin(tostring(event.networkid), event),
-		savedNades = {}
+		savedNades = {},
+		tempNadeName = " ",
+		tempNadeDesc = " ",
+		tempNadeType = " "
 	}
 	connectedPlayers[event.userid] = playerData
 end
@@ -656,6 +688,17 @@ function OnPlayerSpawned(event)
 	
 end
 
+function OnPlayerPing(event)
+	
+	if roundStarted == false and votingEnabled == true then
+		PlayerVotes(event)
+	end
+	
+	if checkPlayerPawnForAdminStatus(GetPlayerPawnByID(event.userid)) and praccEnabled == true then
+		savingNade(event)
+	end
+end
+
 function OnPlayerDisconnect(event)
 	removeFromVoted(event.userid)
 	connectedPlayers[event.userid] = nil
@@ -665,7 +708,7 @@ StartWarmup()
 
 ListenToGameEvent("player_connect", OnPlayerConnect, nil)
 ListenToGameEvent("player_spawn", OnPlayerSpawned, nil)
-ListenToGameEvent("player_ping", PlayerVotes, nil)
+ListenToGameEvent("player_ping", OnPlayerPing, nil)
 ListenToGameEvent("player_disconnect", OnPlayerDisconnect, nil)
 
 print("[DEAFPS PUG] Plugin loaded!")
