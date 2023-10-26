@@ -369,6 +369,16 @@ function GetSavedNadeByPawnAndID(playerpawn, nadeID)
     print("Player pawn or nadeID not found")
 end
 
+function GetSavedSavingNade(playerpawn)
+    for _, playerData in pairs(connectedPlayers) do
+        if playerData.playerpawn == playerpawn then
+			print(playerData.isSavingNades)
+            return playerData.isSavingNades
+        end
+    end
+    print("Player pawn not found")
+end
+
 function addNadeDataFromString(playerpawn, s, nType, desc, importToAll)
     -- Split the string by spaces
     local parts = {}
