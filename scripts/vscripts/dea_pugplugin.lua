@@ -312,24 +312,23 @@ Convars:RegisterCommand( "pracc" , function ()
 	end
 end, nil , FCVAR_PROTECTED)
 
-currentlySavingNade = false
 
 Convars:RegisterCommand( "savenade" , function (_, msg, ntype, desc)
     local user = Convars:GetCommandClient()
 	
 	if checkPlayerPawnForAdminStatus(user) and praccEnabled == true then
 		
-		currentlySavingNade = true
-
 		local playerData = connectedPlayers[GetUserIDByPawn(user)]
-		if playerData then
-			playerData.tempNadeName = msg
-			playerData.tempNadeDesc = desc
-			playerData.tempNadeType = ntype
-		end
+		
+		connectedPlayers[GetUserIDByPawn(user)].isSavingNades = true
+		connectedPlayers[GetUserIDByPawn(user)].tempNadeName = msg 
+		connectedPlayers[GetUserIDByPawn(user)].tempNadeDesc = desc
+		connectedPlayers[GetUserIDByPawn(user)].tempNadeType = ntype
+
 		
 		for _, playerData in pairs(connectedPlayers) do
 			if playerData.playerpawn == playerpawn then
+			
 				playerData.savedNades[nadeID] = {
 					location = locationVector,
 					angle = angleVector,
@@ -365,7 +364,7 @@ end, nil , FCVAR_PROTECTED)
 
 function savingNade(event)
 
-	if currentlySavingNade == true then
+	if connectedPlayers[GetUserIDByPawn(GetPlayerPawnByID(event.userid))].isSavingNades == true then
 		local user = GetPlayerPawnByID(event.userid)
 		
 		local indicatorXYZvec = Vector(event.x, event.y, event.z)
@@ -380,7 +379,9 @@ function savingNade(event)
 
 		
 		ScriptPrintMessageChatAll(' \x05' .. tostring(GetPlayerNameByPawn(user)) .. ' saved a Nade! \x01 "' .. tostring(nadeName) .. ' ' .. formattedOrigin .. ' ' .. formattedAngle .. ' ' .. formattedIndicator .. '"')
-		currentlySavingNade = false
+		
+		connectedPlayers[GetUserIDByPawn(user)].isSavingNades = false
+		
 		print('"' .. tostring(nadeName) .. ' ' .. formattedOrigin .. ' ' .. formattedAngle .. ' ' .. formattedIndicator .. '"')
 		--print("A new nade saved")
 		
@@ -579,8 +580,6 @@ local knifeCommands = {
 }
 
 Convars:RegisterCommand("knife", function(_, knife)
-    local user = Convars:GetCommandClient()
-    
     if checkPlayerPawnForAdminStatus(user) and praccEnabled == true then
 	
 		local command = knifeCommands[knife]
@@ -671,6 +670,7 @@ function OnPlayerConnect(event)
 		playerpawn = " ",
 		admin = checkAdmin(tostring(event.networkid), event),
 		savedNades = {},
+		isSavingNades = false,
 		tempNadeName = " ",
 		tempNadeDesc = " ",
 		tempNadeType = " "
