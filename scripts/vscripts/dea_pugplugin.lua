@@ -580,7 +580,9 @@ local knifeCommands = {
 }
 
 Convars:RegisterCommand("knife", function(_, knife)
-    if checkPlayerPawnForAdminStatus(user) and praccEnabled == true then
+    local user = Convars:GetCommandClient()
+	
+	if checkPlayerPawnForAdminStatus(user) and praccEnabled == true then
 	
 		local command = knifeCommands[knife]
 		if command then
