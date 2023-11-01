@@ -44,7 +44,7 @@ Lua Patcher (use if you are not using MetaMod, and make sure your server runs -i
 - `changemap de_dust2`   --Changes map
 
 ## Pracc Commands
-- `pracc 1/0`            --Enables pracc mode
+- `pracc`            --Enables pracc mode
 - `pracchelp`            --prints these commands in chat
 - `savenade "mynade" "type" "description"`      --Saves a nade lineup with the given name, description and type. Valid types: smoke, he, falsh, molly
 - `loadnade mynade`      --Loads a nade lineup
@@ -53,12 +53,6 @@ Lua Patcher (use if you are not using MetaMod, and make sure your server runs -i
 - `allmolly`             --Shows all saved molotovs
 - `allhe`                --Shows all saved HE nades
 - `allflash`             --Shows all saved flashes
-
-# Some Nade Codes to import
-- Nuke Outside Cross JT `"outside_jumpthrow -1349.97 -968.03 -399.97 -12.03 -27.06 0.00"`
-- Nuke Solo Secret Cross JT `"secret_jumpthrow -1349.97 -968.03 -399.97 -28.23 -28.60 0.00"`
-- Nuke A Heaven JT `"a_haven_jumpthrow -1180.03 -1263.97 -319.97 -14.76 23.13 0.00"`
-- Inferno CT `"inferno_ct 371.23 1661.56 134.03 -32.74 64.58 0.00"`
 
 ## Author
 [@DEAFPS_](https://twitter.com/deafps_)
