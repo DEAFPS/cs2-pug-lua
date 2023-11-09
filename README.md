@@ -15,7 +15,7 @@ Lua Patcher (use if you are not using MetaMod, and make sure your server runs -i
 ### Installing
 
 * Unzip into your servers `game/csgo` folder and
-* Add `exec pugplugin` to your servers gamemode cfg (e.g. `gamemode_competitive.cfg`)
+* Add `exec dea_pugplugin` to your servers gamemode cfg (e.g. `gamemode_competitive.cfg`)
 
 ### Configuration
 
