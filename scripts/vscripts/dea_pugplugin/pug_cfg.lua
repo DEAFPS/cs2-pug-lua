@@ -30,6 +30,7 @@ useCustomCFG = false 			-- if a custom cfg should be used
 customCFG = "crazywhackysettings.cfg" 	-- place your custom cfg into the cfg folder and put name here.
 					-- make sure to not use mp_restartgame since that is being handled by the plugin already
 
+loadPraccNades = true
 
 adminPlayers = {			--admins/constantly whitelisted, same as with the whitelist table use a SteamID3
 	"[U:1:146535711]", --admin example

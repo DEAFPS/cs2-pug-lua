@@ -72,10 +72,37 @@ function GetPlayerNameByID(userid)
     end
 end
 
+function GetPlayerPawnByID(userid)
+    local playerData = connectedPlayers[userid]
+    if playerData then
+        return playerData.playerpawn
+    else
+        return "unknown"
+    end
+end
+
 function GetPlayerNameByPawn(playerpawn)
     for _, playerData in pairs(connectedPlayers) do
         if playerData.playerpawn == playerpawn then
             return tostring(playerData.name)
+        end
+    end
+    return "unknown"
+end
+
+function GetUserIDByPawn(playerpawn)
+    for _, playerData in pairs(connectedPlayers) do
+        if playerData.playerpawn == playerpawn then
+            return tonumber(playerData.userid)
+        end
+    end
+    return "unknown"
+end
+
+function GetTempNadeDataByPawn(playerpawn)
+    for _, playerData in pairs(connectedPlayers) do
+        if playerData.playerpawn == playerpawn then
+            return playerData.tempNadeName, playerData.tempNadeDesc, playerData.tempNadeType
         end
     end
     return "unknown"
@@ -140,6 +167,8 @@ function setGeneralSettings()
 	SendToServerConsole("mp_randomspawn 0")
 	SendToServerConsole("mp_teammates_are_enemies 0")
 	
+	SendToServerConsole("mp_respawn_on_death_t 0")
+	SendToServerConsole("mp_respawn_on_death_ct 0")
 	SendToServerConsole("mp_autoteambalance 1")
 	SendToServerConsole("mp_timelimit 0")
 	SendToServerConsole("mp_roundtime 1.920000")
@@ -162,6 +191,8 @@ function setGeneralSettings()
 	SendToServerConsole("mp_drop_grenade_enable 1")
 	SendToServerConsole("mp_anyone_can_pickup_c4 0")
 	SendToServerConsole("sv_grenade_trajectory_prac_pipreview 0")
+	SendToServerConsole('mp_t_default_grenades 0')
+	SendToServerConsole('mp_ct_default_grenades 0')
 	SendToServerConsole("mp_restartgame 1")
 	SendToServerConsole("sv_cheats 0")
 	
@@ -181,6 +212,8 @@ function setPraccSettings()
 	
 	SendToServerConsole("mp_warmup_end")
 	SendToServerConsole("sv_cheats 1")
+	SendToServerConsole("mp_respawn_on_death_t 1")
+	SendToServerConsole("mp_respawn_on_death_ct 1")
 	SendToServerConsole("mp_autoteambalance 0")
 	SendToServerConsole("mp_timelimit 0")
 	SendToServerConsole("mp_roundtime 60")
@@ -202,8 +235,63 @@ function setPraccSettings()
 	SendToServerConsole("mp_drop_knife_enable 1")
 	SendToServerConsole("mp_drop_grenade_enable 1")
 	SendToServerConsole("mp_anyone_can_pickup_c4 1")
+	SendToServerConsole('mp_ct_default_grenades "weapon_incgrenade weapon_hegrenade weapon_flashbang weapon_smokegrenade"')
+	SendToServerConsole('mp_t_default_grenades "weapon_incgrenade weapon_hegrenade weapon_flashbang weapon_smokegrenade"')
 	SendToServerConsole("mp_restartgame 1")
 	SendToServerConsole("sv_grenade_trajectory_prac_pipreview 1")
+	
+	if loadPraccNades == true then
+		SendToServerConsole("exec dea_pugplugin_praccnades")
+	end
+end
+
+function printPraccHelp()
+	ScriptPrintMessageChatAll(" \x01---------------------------------------------------------------------------------")
+	ScriptPrintMessageChatAll(" \x03" .. "Commands:")
+	ScriptPrintMessageChatAll(" \x01---------------------------------------------------------------------------------")
+	ScriptPrintMessageChatAll(" \x03" .. 'savenade "mynade" "type" "description"')
+	ScriptPrintMessageChatAll(" \x0D" .. 'Saves a nade lineup with the given name, description and type')
+	ScriptPrintMessageChatAll(" \x0D" .. 'Valid types: smoke, he, falsh, molly')
+	ScriptPrintMessageChatAll(" \x01---------------------------------------------------------------------------------")
+	ScriptPrintMessageChatAll(" \x03" .. "loadnade mynade")
+	ScriptPrintMessageChatAll(" \x0D" .. "Loads a nade lineup")
+	ScriptPrintMessageChatAll(" \x01---------------------------------------------------------------------------------")
+	ScriptPrintMessageChatAll(" \x03" .. 'importnade "code"')
+	ScriptPrintMessageChatAll(" \x0D" .. 'Imports a nade from a nade code')
+	ScriptPrintMessageChatAll(" \x01---------------------------------------------------------------------------------")
+	ScriptPrintMessageChatAll(" \x03" .. "allsmoke")
+	ScriptPrintMessageChatAll(" \x0D" .. "Shows all saved smokes")
+	ScriptPrintMessageChatAll(" \x01---------------------------------------------------------------------------------")
+	ScriptPrintMessageChatAll(" \x03" .. "allmolly")
+	ScriptPrintMessageChatAll(" \x0D" .. "Shows all saved molotovs")
+	ScriptPrintMessageChatAll(" \x01---------------------------------------------------------------------------------")
+	ScriptPrintMessageChatAll(" \x03" .. "allhe")
+	ScriptPrintMessageChatAll(" \x0D" .. "Shows all saved HE nades")
+	ScriptPrintMessageChatAll(" \x01---------------------------------------------------------------------------------")
+	ScriptPrintMessageChatAll(" \x03" .. "allflash")
+	ScriptPrintMessageChatAll(" \x0D" .. "Shows all saved flashes")
+	ScriptPrintMessageChatAll(" \x01---------------------------------------------------------------------------------")
+	ScriptPrintMessageChatAll(" \x03" .. "pracchelp")
+	ScriptPrintMessageChatAll(" \x0D" .. "Prints these commands in chat")
+	ScriptPrintMessageChatAll(" \x01---------------------------------------------------------------------------------")
+	ScriptPrintMessageChatAll(" \x03" .. "godmode")
+	ScriptPrintMessageChatAll(" \x0D" .. "Enables God Mode")
+	ScriptPrintMessageChatAll(" \x01---------------------------------------------------------------------------------")
+end
+
+function printAdminHelp()
+	ScriptPrintMessageChatAll(" \x01 [ADMIN] \x0B" .. " Commands:")
+	ScriptPrintMessageChatAll(" \x01 [ADMIN] \x0B" .. " adminsay hello - prints a message in chat with a admin nametag")
+	ScriptPrintMessageChatAll(" \x01 [ADMIN] \x0B" .. " startpug - starts the pug")
+	ScriptPrintMessageChatAll(" \x01 [ADMIN] \x0B" .. ' pausepug - pauses the pug')
+	ScriptPrintMessageChatAll(" \x01 [ADMIN] \x0B" .. " unpausepug - unpauses the pug")
+	ScriptPrintMessageChatAll(" \x01 [ADMIN] \x0B" .. " restartpug - compleatly restarts the pug")
+	ScriptPrintMessageChatAll(" \x01 [ADMIN] \x0B" .. " scramble - shuffles teams")
+	ScriptPrintMessageChatAll(" \x01 [ADMIN] \x0B" .. " rewarmup - restarts warmup phase")
+	ScriptPrintMessageChatAll(" \x01 [ADMIN] \x0B" .. " pugkick id - kicks the player")
+	ScriptPrintMessageChatAll(" \x01 [ADMIN] \x0B" .. " unpausepug - unpauses the pug")
+	ScriptPrintMessageChatAll(" \x01 [ADMIN] \x0B" .. " changemap de_dust2 - changes map")
+	ScriptPrintMessageChatAll(" \x01 [ADMIN] \x0B" .. " adminhelp - prints these commands in chat")
 end
 
 function checkPlayerPawnForAdminStatus(playerPawnToCheck)
@@ -243,12 +331,27 @@ function checkAdmin(steamid, event)
 	end
 end
 
-function addNadeData(playerpawn, nadeID, locationVector, angleVector)
-    for _, playerData in pairs(connectedPlayers) do
+function sendClientCMD(cmd, user)
+	local ClientCmd = Entities:FindByClassname(nil, "point_clientcommand")
+	
+	if ClientCmd == nil then
+		ClientCmd = SpawnEntityFromTableSynchronous("point_clientcommand", { targetname = "vscript_clientcommand" })
+	else
+		--clientCmd already there
+	end
+	
+	DoEntFireByInstanceHandle(ClientCmd, "command", cmd, 0.1, user, user)
+end
+
+function addNadeData(playerpawn, nadeID, ntype, desc, locationVector, angleVector, indicatorXYZ)
+	for _, playerData in pairs(connectedPlayers) do
         if playerData.playerpawn == playerpawn then
             playerData.savedNades[nadeID] = {
                 location = locationVector,
-                angle = angleVector
+                angle = angleVector,
+				description = desc,
+				nadeType =  ntype,
+				indicator = indicatorXYZ
             }
             return
         end
@@ -266,21 +369,194 @@ function GetSavedNadeByPawnAndID(playerpawn, nadeID)
     print("Player pawn or nadeID not found")
 end
 
-function parseNadeString(s)
+function GetSavedSavingNade(playerpawn)
+    for _, playerData in pairs(connectedPlayers) do
+        if playerData.playerpawn == playerpawn then
+			print(playerData.isSavingNades)
+            return playerData.isSavingNades
+        end
+    end
+    print("Player pawn not found")
+end
+
+function addNadeDataFromString(playerpawn, s, nType, desc, importToAll)
+    -- Split the string by spaces
     local parts = {}
     for part in string.gmatch(s, "%S+") do
         table.insert(parts, part)
     end
 
-    if #parts ~= 7 then
-        return nil, "Invalid string format"
+    -- Ensure there are 10 parts: nadeID, x, y, z, pitch, yaw, roll, x, y, z
+    if #parts ~= 10 then
+        return false, "Invalid string format"
     end
 
     local nadeID = parts[1]
     local location = Vector(tonumber(parts[2]), tonumber(parts[3]), tonumber(parts[4]))
     local angle = Vector(tonumber(parts[5]), tonumber(parts[6]), tonumber(parts[7]))
+	local indic = Vector(tonumber(parts[8]), tonumber(parts[9]), tonumber(parts[10]))
 
-    return nadeID, location, angle
+    if importToAll then
+        -- Import to every player in connectedPlayers
+        for _, playerData in pairs(connectedPlayers) do
+            playerData.savedNades[nadeID] = {
+                location = location,
+                angle = angle,
+				indicator = indic,
+				description = desc,
+				nadeType =  nType
+            }
+        end
+        return true
+    else
+        -- Find the player with the matching pawn in connectedPlayers
+        for _, playerData in pairs(connectedPlayers) do
+            if playerData.playerpawn == playerpawn then
+                playerData.savedNades[nadeID] = {
+                    location = location,
+                    angle = angle,
+					indicator = indic,
+					description = desc,
+					nadeType =  nType
+                }
+                return nadeID, location, angle, desc, nType
+            end
+        end
+    end
+
+    -- If we reach here, the player was not found (only applicable when importToAll is false)
+    return false, "Player not found"
 end
 
+function printNadesForPlayer(playerpawn, nadeTypeFilter)
+    -- Find the player with the matching pawn in connectedPlayers
+    for _, playerData in pairs(connectedPlayers) do
+        if playerData.playerpawn == playerpawn then
+            -- Check if the player has saved nades
+            if not playerData.savedNades or next(playerData.savedNades) == nil then
+                print("No nades saved for player:", playerData.name)
+                return
+            end
 
+            local nadeFound = false  -- To track if at least one nade of the specified type is found
+
+            -- Extract nade IDs and sort them
+            local sortedNadeIDs = {}
+            for nadeID in pairs(playerData.savedNades) do
+                table.insert(sortedNadeIDs, nadeID)
+            end
+            table.sort(sortedNadeIDs)
+
+            -- Iterate over sorted nade IDs and print details of those that match the nadeType
+            for _, nadeID in ipairs(sortedNadeIDs) do
+                local nadeData = playerData.savedNades[nadeID]
+                if nadeData.nadeType == nadeTypeFilter then
+                    local desc = nadeData.description
+                    local nType = nadeData.nadeType
+                    ScriptPrintMessageChatAll(" \x01---------------------------------------------------------------------------------")
+                    ScriptPrintMessageChatAll(" \x05 Type: " .. nType)
+					ScriptPrintMessageChatAll(" \x10" .. desc)
+                    ScriptPrintMessageChatAll(" \x0D Command: \x06loadnade " .. nadeID)
+                    nadeFound = true
+                end
+            end
+
+            if not nadeFound then
+                print("No nades of type", nadeTypeFilter, "found for player:", playerData.name)
+            end
+
+            return  -- Exit after printing nades for the specified player
+        end
+    end
+
+    print("Player not found with pawn:", playerpawn)
+end
+
+function vectorToString(vecString)
+	vectr = tostring(vecString)
+    local x, y, z = vectr:match("%[(-?%d+%.?%d*)%s+(-?%d+%.?%d*)%s+(-?%d+%.?%d*)%]")
+    if x and y and z then
+        return x .. "  " .. y .. "  " .. z
+    else
+        return "Invalid vector format"
+    end
+end
+
+function MoveVectorCloser(vector1, vector2, units)
+    -- Get the direction from vector2 to vector1
+    local direction = (vector1 - vector2):Normalized()
+    
+    -- Scale the direction by the desired units
+    local moveVector = direction * units
+    
+    -- Get the new location for vector2
+    local newVector2 = vector2 + moveVector
+    
+    return newVector2
+end
+
+nadeLocIndicator = nil
+
+
+--function makeNadeLocIndicator(location)
+--	
+--	ang = Vector(0,0,0)
+--	
+--	nadeLocIndicator = Entities:FindByClassname(nil, "point_worldtext")
+--
+--    if nadeLocIndicator == nil then
+--        nadeLocIndicator = SpawnEntityFromTableAsynchronous("point_worldtext", {
+--            targetname = "vscript_nadeLocIndicator",
+--            message = "O",
+--            enabled = true,
+--            fullbright = true,
+--            color = Vector(255, 0, 0),
+--            world_units_per_pixel = "0.015",
+--			orientation = 1,
+--			font_name = "1",
+--            font_size = 100,
+--            justify_horizontal = "1",
+--            justify_vertical = "1",
+--			origin = vectorToString(location),
+--			angles = "0 0 0",
+--			scales = "10.0 10.0 10.0",
+--        }, nil, nil)
+--		--print("new LocIndicator created")
+--    else
+--        nadeLocIndicator:SetLocalOrigin(location)
+--	end                  
+--end
+
+function makeNadeAngIndicator(player, location, angs)
+	
+	if vectorToString(location) == "Invalid vector format" then
+		return
+	end
+	
+	
+	local newLoc = MoveVectorCloser(player:GetLocalOrigin(), location, 1)
+	local newAng = QAngle(angs.x + 90, angs.y, angs.z)
+	
+	if nadeLocIndicator == nil then
+		nadeLocIndicator = SpawnEntityFromTableAsynchronous("point_worldtext", {
+			targetname = "vscript_nadeLocIndicator",
+			message = "O",
+			enabled = true,
+			fullbright = true,
+			color = Vector(0, 255, 0),
+			world_units_per_pixel = "0.015",
+			orientation = 1,
+			rainbow = true,
+			font_name = "1",
+			font_size = 50,
+			justify_horizontal = "1",
+			justify_vertical = "1",
+			origin = vectorToString(newLoc),
+			angles = vectorToString(newAng),
+			scales = "10.0 10.0 10.0",
+		}, nil, nil)
+	else
+		nadeLocIndicator:SetLocalOrigin(newLoc)
+	end 
+	--print("new AngIndicator created")
+end
