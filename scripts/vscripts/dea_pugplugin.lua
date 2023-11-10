@@ -236,8 +236,20 @@ Convars:RegisterCommand("changemap", function (_, map)
 			useGameTime = false,
 			endTime = seconds,
 			callback = function()
-				SendToServerConsole("map " .. mmap)
-					
+				local switch = {
+					["de_haven"] = function() SendToServerConsole("host_workshop_map 3070783897") end,
+					["de_ascent"] = function() SendToServerConsole("host_workshop_map 3070228074") end,
+					["de_cache"] = function() SendToServerConsole("host_workshop_map 3070244931") end,
+					["onlyup"] = function() SendToServerConsole("host_workshop_map 3074758439") end,
+					["de_inferno_old"] = function() SendToServerConsole("host_workshop_map 3070299727") end,
+					["de_dust2_night"] = function() SendToServerConsole("host_workshop_map 3073150255") end,
+					["de_dust2_classic"] = function() SendToServerConsole("host_workshop_map 3070363499") end,
+					default = function() SendToServerConsole("map " .. mmap) end,
+				}
+
+				local case = switch
+				local selectedCase = case[mmap] or case.default
+				selectedCase()
 			end
 		})
 	end
