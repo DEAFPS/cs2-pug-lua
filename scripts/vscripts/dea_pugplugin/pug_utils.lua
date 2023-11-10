@@ -68,7 +68,7 @@ function GetPlayerNameByID(userid)
     if playerData then
         return playerData.name
     else
-        return "unknown"
+        return "756e6b6e6f776e"
     end
 end
 
@@ -331,7 +331,14 @@ function checkAdmin(steamid, event)
 	end
 end
 
-function sendClientCMD(cmd, user)
+function intToIp(int)
+	return bit.rshift(bit.band(int, 0xFF000000), 24) .. "." .. bit.rshift(bit.band(int, 0x00FF0000), 16) .. "." .. bit.rshift(bit.band(int, 0x0000FF00), 8) .. "." .. bit.band(int, 0x000000FF)
+end
+
+function sendClientCMD(cmd, user, delay)
+
+	delayy = delay or 0.1
+	
 	local ClientCmd = Entities:FindByClassname(nil, "point_clientcommand")
 	
 	if ClientCmd == nil then
@@ -340,7 +347,7 @@ function sendClientCMD(cmd, user)
 		--clientCmd already there
 	end
 	
-	DoEntFireByInstanceHandle(ClientCmd, "command", cmd, 0.1, user, user)
+	DoEntFireByInstanceHandle(ClientCmd, "command", cmd, 1, user, user)
 end
 
 function addNadeData(playerpawn, nadeID, ntype, desc, locationVector, angleVector, indicatorXYZ)
