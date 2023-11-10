@@ -331,6 +331,19 @@ function checkAdmin(steamid, event)
 	end
 end
 
+function switch(t)
+    return t.case or function (self, value)
+        local f = self[value] or self.default
+        if f then
+            if type(f) == "function" then
+                f(value)
+            else
+                error("case " .. tostring(value) .. " is not a function")
+            end
+        end
+    end
+end
+
 function intToIp(int)
 	return bit.rshift(bit.band(int, 0xFF000000), 24) .. "." .. bit.rshift(bit.band(int, 0x00FF0000), 16) .. "." .. bit.rshift(bit.band(int, 0x0000FF00), 8) .. "." .. bit.band(int, 0x000000FF)
 end
