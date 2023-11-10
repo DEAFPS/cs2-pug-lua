@@ -208,6 +208,42 @@ Convars:RegisterCommand("restartpug", function()
 end, nil, 0)
 
 Convars:RegisterCommand("changemap", function (_, map)
+	local mmap = tostring (map)
+	local user = Convars:GetCommandClient()
+	
+	if checkPlayerPawnForAdminStatus(user) then
+	
+		seconds = 20
+		roundStarted = true
+		HC_PrintChatAll_pug("{green} Changing Map in: " .. seconds .. " seconds")
+		HC_PrintChatAll_pug("{green} Please reconnect using: {white}connect " .. intToIp(Convars:GetInt("hostip")) .. ":" .. Convars:GetInt("hostport"))
+		HC_PrintChatAll_pug("{green} Changing Map in: " .. seconds .. " seconds")
+		HC_PrintChatAll_pug("{green} Please reconnect using: {white}connect " .. intToIp(Convars:GetInt("hostip")) .. ":" .. Convars:GetInt("hostport"))
+		HC_PrintChatAll_pug("{green} Changing Map in: " .. seconds .. " seconds")
+		HC_PrintChatAll_pug("{green} Please reconnect using: {white}connect " .. intToIp(Convars:GetInt("hostip")) .. ":" .. Convars:GetInt("hostport"))
+		HC_PrintChatAll_pug("{green} Changing Map in: " .. seconds .. " seconds")
+		HC_PrintChatAll_pug("{green} Please reconnect using: {white}connect " .. intToIp(Convars:GetInt("hostip")) .. ":" .. Convars:GetInt("hostport"))
+		HC_PrintChatAll_pug("{green} Changing Map in: " .. seconds .. " seconds")
+		HC_PrintChatAll_pug("{green} Please reconnect using: {white}connect " .. intToIp(Convars:GetInt("hostip")) .. ":" .. Convars:GetInt("hostport"))
+		HC_PrintChatAll_pug("{green} Changing Map in: " .. seconds .. " seconds")
+		HC_PrintChatAll_pug("{green} Please reconnect using: {white}connect " .. intToIp(Convars:GetInt("hostip")) .. ":" .. Convars:GetInt("hostport"))
+		HC_PrintChatAll_pug("{green} Changing Map in: " .. seconds .. " seconds")
+		HC_PrintChatAll_pug("{green} Please reconnect using: {white}connect " .. intToIp(Convars:GetInt("hostip")) .. ":" .. Convars:GetInt("hostport"))
+		HC_PrintChatAll_pug("{green} Changing Map in: " .. seconds .. " seconds")
+		HC_PrintChatAll_pug("{green} Please reconnect using: {white}connect " .. intToIp(Convars:GetInt("hostip")) .. ":" .. Convars:GetInt("hostport"))
+				
+		Timers:CreateTimer({
+			useGameTime = false,
+			endTime = seconds,
+			callback = function()
+				SendToServerConsole("map " .. mmap)
+					
+			end
+		})
+	end
+end, nil, 0)
+
+Convars:RegisterCommand("changeworkmap", function (_, map)
 	local mmap = tostring (map) or  30
 	local user = Convars:GetCommandClient()
 	
@@ -225,25 +261,14 @@ Convars:RegisterCommand("changemap", function (_, map)
 							return 1.0
 						end,
 		})
-
-		if autokickOnMapChange == true then
-			Timers:CreateTimer({
+				
+		Timers:CreateTimer({
 			useGameTime = false,
 			endTime = 10,
 			callback = function()
-				KickAllPlayers()
+				SendToServerConsole("host_workshop_map " .. mmap)
 					
 			end
-			})
-		end
-				
-		Timers:CreateTimer({
-		useGameTime = false,
-		endTime = 15,
-		callback = function()
-			SendToServerConsole("map " .. mmap)
-				
-		end
 		})
 	end
 end, nil, 0)
@@ -640,14 +665,10 @@ function PlayerVotes(event)
 	
 	if tableContains(playersThatVoted, event.userid) then
 		removeFromVoted(event.userid)
-		if autokickOnMapChange == true then
-			HC_PrintChatAll_pug( " {lightgray}" .. tostring(GetPlayerNameByID(event.userid)) .. " is not ready! {green}Players voted: " .. #playersThatVoted)
-		end
+		HC_PrintChatAll_pug( " {lightgray}" .. tostring(GetPlayerNameByID(event.userid)) .. " is not ready! {green}Players voted: " .. #playersThatVoted)
 	elseif not tableContains(playersThatVoted, event.userid) then
 		table.insert(playersThatVoted, event.userid)
-		if autokickOnMapChange == true then
-			HC_PrintChatAll_pug( " {lightgray}" .. tostring(GetPlayerNameByID(event.userid)) .. " is ready! {green}Players voted: " .. #playersThatVoted)
-		end
+		HC_PrintChatAll_pug( " {lightgray}" .. tostring(GetPlayerNameByID(event.userid)) .. " is ready! {green}Players voted: " .. #playersThatVoted)
 	end
 	
 	if #playersThatVoted == readyNeeded then
@@ -684,12 +705,15 @@ function OnPlayerSpawned(event)
     
 	PrintWaitingforPlayers(event)
 	
-	local userid = event.userid
-    local playerData = connectedPlayers[userid]
-    if playerData then
-        playerData.playerpawn = UserIdPawnToPlayerPawn(event.userid_pawn)
-    end
+	if GetPlayerNameByID(event.userid) == "756e6b6e6f776e" then
+		SendToServerConsole("kickid " .. event.userid .. " Please reconnect using: connect " .. intToIp(Convars:GetInt("hostip")))
+	end
 	
+	local userid = event.userid
+	local playerData = connectedPlayers[userid]
+	if playerData then
+		playerData.playerpawn = UserIdPawnToPlayerPawn(event.userid_pawn)
+	end
 end
 
 function OnPlayerPing(event)
