@@ -64,21 +64,21 @@ function UserIdPawnToPlayerPawn(useridPawn)
 end
 
 function GetPlayerNameByID(userid)
-    local playerData = connectedPlayers[userid]
-    if playerData then
-        return playerData.name
-    else
-        return "756e6b6e6f776e"
+   for _, playerData in pairs(connectedPlayers) do
+        if playerData.userid == userid then
+            return tostring(playerData.name)
+        end
     end
+    return "756e6b6e6f776e"
 end
 
 function GetPlayerPawnByID(userid)
-    local playerData = connectedPlayers[userid]
-    if playerData then
-        return playerData.playerpawn
-    else
-        return "unknown"
+    for _, playerData in pairs(connectedPlayers) do
+        if playerData.userid == userid then
+            return playerData.playerpawn
+        end
     end
+    return "unknown"
 end
 
 function GetPlayerNameByPawn(playerpawn)
@@ -87,7 +87,7 @@ function GetPlayerNameByPawn(playerpawn)
             return tostring(playerData.name)
         end
     end
-    return "unknown"
+    return "756e6b6e6f776e"
 end
 
 function GetUserIDByPawn(playerpawn)
